@@ -1,0 +1,63 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import Link from "next/link";
+import { ScreeningProvider } from "@/context/ScreeningContext";
+import { PatientProvider } from "@/context/PatientContext";
+import { Activity, LayoutDashboard, FileText, History, Settings, Video } from "lucide-react";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Doctor AI | Knee OA Screening",
+  description: "AI-assisted knee osteoarthritis screening through gait and movement analysis.",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className="dark">
+      <body className={`${inter.className} bg-background text-foreground flex h-screen overflow-hidden`}>
+        
+        {/* Sidebar */}
+        <aside className="w-64 border-r border-white/10 bg-black/50 backdrop-blur-md flex flex-col hidden md:flex">
+          <div className="p-6 border-b border-white/10">
+            <div className="flex items-center gap-2"><img src="/logo.jpg" alt="Swastik Logo" className="h-10 object-contain rounded-sm" /></div>
+            <p className="text-xs text-muted-foreground mt-1 tracking-wider uppercase">Movement Lab</p>
+          </div>
+          
+          <nav className="flex-1 p-4 space-y-2">
+            <NavLink href="/" icon={<LayoutDashboard size={18} />}>New Screening</NavLink>
+            <NavLink href="/reports" icon={<History size={18} />}>Reports History</NavLink>
+          </nav>
+          
+          <div className="p-4 border-t border-white/10">
+            <NavLink href="#" icon={<Settings size={18} />}>Settings</NavLink>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto relative bg-gradient-to-br from-background to-[#111]">
+          <PatientProvider><span>{children}</span></PatientProvider>
+        </main>
+        
+      </body>
+    </html>
+  );
+}
+
+function NavLink({ href, icon, children }: { href: string; icon: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <Link 
+      href={href} 
+      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors"
+    >
+      {icon}
+      <PatientProvider><span>{children}</span></PatientProvider>
+    </Link>
+  );
+}
+
