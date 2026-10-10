@@ -176,13 +176,16 @@ class PredictionResponse(BaseModel):
 
 
 def predict_probs(pil_img):
-    """Run the 5-fold ensemble on a single (already cropped) PIL image, returning
-    the averaged probability array (numpy, shape (len(CLASSES),))."""
+    """Run the 5-fold ensemble LAZILY to save RAM for Render free tier."""
+    import gc
     input_tensor = eval_transform(pil_img).unsqueeze(0).to(DEVICE)
     probs_sum = torch.zeros(len(CLASSES))
     with torch.no_grad():
-        for model in fold_models:
+        for i in range(NUM_FOLDS):
+            model = load_fold_model(i)
             probs_sum += model(input_tensor).softmax(dim=1).cpu()[0]
+            del model
+            gc.collect()
     return (probs_sum / NUM_FOLDS).numpy()
 
 
