@@ -34,8 +34,8 @@ export default function ReportsPage() {
         <h2 className="text-xl text-white font-medium mb-2">Current Patient</h2>
         {patient ? (
           <div className="flex gap-8 text-gray-300 bg-white/5 p-4 rounded-xl border border-white/10">
-            <div><span className="text-gray-500 text-sm block">Name</span>{patient.name}</div>
-            <div><span className="text-gray-500 text-sm block">Patient ID</span>{patient.id}</div>
+            <div><span className="text-gray-500 text-sm block">Name</span>{patient.patientName}</div>
+            <div><span className="text-gray-500 text-sm block">Patient ID</span>{patient.patientId}</div>
           </div>
         ) : (
           <p className="text-gray-400">No active patient session. Start a new screening to begin.</p>
