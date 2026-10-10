@@ -7,8 +7,8 @@ RUN apt-get update && apt-get install -y gcc g++ && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
 
-# Install CPU-only PyTorch first (saves ~500MB vs default CUDA build)
-RUN pip install --no-cache-dir torch==2.2.2 torchvision==0.17.2 --index-url https://download.pytorch.org/whl/cpu
+# Install CPU-only PyTorch (use --extra-index-url to keep PyPI access for build deps)
+RUN pip install --no-cache-dir torch==2.2.2 torchvision==0.17.2 --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Install remaining dependencies
 RUN pip install --no-cache-dir fastapi==0.111.0 uvicorn==0.30.1 python-multipart==0.0.9 Pillow==10.3.0 numpy==1.26.4 scikit-learn==1.4.2 xgboost==2.0.3 joblib==1.4.2 psycopg2-binary==2.9.9
