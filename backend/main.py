@@ -212,7 +212,7 @@ class OsteoporosisBasicData(BaseModel):
     Alcohol_Consumption: str
 
 try:
-    clinical_pipeline = joblib.load(r"C:\Users\ASUS\OneDrive\Desktop\sih\backend\models\their_models\osteoporosis_model_fixed.pkl")
+    clinical_pipeline = joblib.load(os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "their_models", "osteoporosis_model_fixed.pkl"))
 except Exception as e:
     print("Could not load clinical pipeline:", e)
     clinical_pipeline = None
@@ -250,7 +250,7 @@ async def endpoint_osteoporosis_basic_clinical(data: OsteoporosisBasicData):
 
 
 import sys
-sys.path.append(r'C:\Users\ASUS\OneDrive\Desktop\sih\backend\models\their_models\checkpoints')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "their_models", "checkpoints"))
 from app import detect_double_leg_split, crop_border, predict_probs, CLASSES, LEG_SPLIT_MARGIN_PX
 
 @app.post('/api/analyze/osteoporosis_imaging')
