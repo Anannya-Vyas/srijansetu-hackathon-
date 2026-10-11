@@ -241,11 +241,23 @@ async def endpoint_osteoporosis_basic_clinical(data: OsteoporosisBasicData):
     probabilities = clinical_pipeline.predict_proba(df)[0]
     classes = clinical_pipeline.classes_
     confidence = max(probabilities)
-    prediction = classes[np.argmax(probabilities)]
+    pred_idx = np.argmax(probabilities)
+    raw_pred = classes[pred_idx]
+    
+    # Map 1 -> Osteoporosis (High Risk), 0 -> Normal (Low Risk)
+    is_osteo = (raw_pred == 1 or str(raw_pred) == "1")
+    label = "Osteoporosis" if is_osteo else "Normal"
+    osteo_prob = float(probabilities[1]) if len(probabilities) > 1 else (1.0 if is_osteo else 0.0)
     
     return {
         "confidence": float(confidence * 100),
-        "prediction": str(prediction)
+        "prediction": label,
+        "raw_prediction": int(raw_pred) if str(raw_pred).isdigit() else raw_pred,
+        "osteoporosis_probability": osteo_prob,
+        "probabilities": {
+            "Normal": float(probabilities[0] * 100),
+            "Osteoporosis": float(probabilities[1] * 100) if len(probabilities) > 1 else 0.0
+        }
     }
 
 
@@ -265,7 +277,11 @@ async def endpoint_osteoporosis_imaging(file: UploadFile = File(...), patient_id
         img = crop_border(img)
         
         gray_arr = np.array(img.convert("L"))
-        split_col = detect_double_leg_split(gray_arr)
+        # Guard: Bilateral (double-leg) X-rays are wide panoramic landscape (aspect ratio width/height >= 1.25)
+        # Single-leg knee radiographs are portrait or roughly square (aspect ratio < 1.25).
+        # We must NEVER split single-leg images in half!
+        aspect_ratio = gray_arr.shape[1] / max(gray_arr.shape[0], 1)
+        split_col = detect_double_leg_split(gray_arr) if aspect_ratio >= 1.25 else None
         
         if split_col is not None:
             w = gray_arr.shape[1]
@@ -282,9 +298,16 @@ async def endpoint_osteoporosis_imaging(file: UploadFile = File(...), patient_id
         confidence = np.max(probs_avg)
         prediction = CLASSES[pred_idx]
         
+        prob_dict = {cls: float(p * 100) for cls, p in zip(CLASSES, probs_avg)}
+        print(f"[X-RAY DEBUG] Double leg split detected: {split_col is not None} (col={split_col})")
+        print(f"[X-RAY DEBUG] Full probabilities: {prob_dict}")
+        print(f"[X-RAY DEBUG] Final prediction: {prediction} ({confidence*100:.2f}%)")
+        
         return {
             "confidence": float(confidence * 100),
-            "prediction": prediction
+            "prediction": prediction,
+            "probabilities": prob_dict,
+            "was_split": split_col is not None
         }
     except Exception as e:
         import traceback

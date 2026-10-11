@@ -47,11 +47,16 @@ export default function BasicQuestionnaire() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to analyze basic clinical data");
       
+      const isOsteo = data.prediction === "Osteoporosis" || data.prediction === "1" || data.prediction === 1;
+      const osteoProb = data.osteoporosis_probability !== undefined 
+        ? data.osteoporosis_probability 
+        : (isOsteo ? data.confidence / 100 : 1 - (data.confidence / 100));
+
       setClinicalResult({
         status: "success",
-        probability: data.confidence / 100,
+        probability: osteoProb,
         threshold: 0.50,
-        result: data.prediction,
+        result: isOsteo ? "Osteoporosis" : "Normal",
         model_name: "10-Feature Clinical Ensemble"
       });
       

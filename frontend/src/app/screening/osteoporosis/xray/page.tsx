@@ -43,9 +43,13 @@ export default function OsteoporosisXRayPage() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || "Failed to process image.");
 
+      const osteoProb = result.probabilities && result.probabilities["Osteoporosis"] !== undefined
+        ? result.probabilities["Osteoporosis"] / 100
+        : (result.prediction === "Osteoporosis" ? result.confidence / 100 : (1 - (result.confidence / 100)));
+
       setImagingResult({
         status: "success",
-        probability: result.confidence / 100,
+        probability: osteoProb,
         threshold: 0.50,
         result: result.prediction,
         model_name: "ResNet18 5-Fold Ensemble"
