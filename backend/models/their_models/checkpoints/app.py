@@ -150,9 +150,7 @@ def load_fold_model(fold_idx):
     return model
 
 
-print("Loading ensemble models...")
-fold_models = [load_fold_model(i) for i in range(NUM_FOLDS)]
-print(f"Loaded {len(fold_models)} models on {DEVICE}.")
+# Lazy loading enabled: models load on-demand per inference to save RAM for Render free tier
 
 # ============================== FASTAPI APP ==============================
 app = FastAPI(title="Knee X-ray Osteoporosis Classifier")
