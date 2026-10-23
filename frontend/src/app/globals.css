@@ -1,28 +1,28 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #0a0a0a;
-  --color-foreground: #ededed;
+  --color-background: #FDFBF7;
+  --color-foreground: #18181B;
   
-  /* Doctor AI Premium Clinical Theme */
-  --color-primary: #ffffff;
-  --color-primary-foreground: #000000;
+  /* Swastik AI Clinical Decision Theme */
+  --color-primary: #18181B;
+  --color-primary-foreground: #ffffff;
   
-  --color-muted: #262626;
-  --color-muted-foreground: #a3a3a3;
+  --color-muted: #F4F1EA;
+  --color-muted-foreground: #71717A;
   
-  --color-accent: #3b82f6;
+  --color-accent: #FF6B4A;
   --color-accent-foreground: #ffffff;
   
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-destructive: #ef4444;
   
-  --color-border: #262626;
+  --color-border: #EBE8E3;
   
   /* Glassmorphism */
-  --color-glass: rgba(255, 255, 255, 0.05);
-  --color-glass-border: rgba(255, 255, 255, 0.1);
+  --color-glass: rgba(255, 255, 255, 0.85);
+  --color-glass-border: rgba(235, 232, 227, 0.9);
 }
 
 @layer base {

@@ -8,12 +8,9 @@ import {
   DownloadIcon, 
   CheckCircledIcon, 
   ExclamationTriangleIcon, 
-  EyeOpenIcon, 
-  EyeClosedIcon, 
   MagicWandIcon, 
   ReloadIcon, 
   ArrowRightIcon, 
-  ExternalLinkIcon, 
   ActivityLogIcon, 
   LayersIcon, 
   LockClosedIcon, 
@@ -35,9 +32,12 @@ export default function OsteoporosisResults() {
 
   if (!clinicalResult && !imagingResult) {
     return (
-      <div className="text-white text-center mt-20">
-        <p className="text-gray-400 mb-4">No screening results available for this session.</p>
-        <Link href="/" className="px-5 py-2.5 rounded-full bg-emerald-600 text-white font-bold hover:bg-emerald-500 transition-all">
+      <div className="text-gray-900 text-center mt-20 max-w-md mx-auto p-8 bg-white border border-[#EBE8E3] rounded-3xl shadow-sm">
+        <p className="text-gray-500 mb-6 text-sm">No screening results available for this session.</p>
+        <Link 
+          href="/" 
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#18181B] text-white font-bold text-xs hover:bg-black transition-all shadow-md"
+        >
           Return to Patient Intake
         </Link>
       </div>
@@ -58,24 +58,25 @@ export default function OsteoporosisResults() {
     ((clinicalResult.result === "Osteoporosis" && imagingResult.result === "Normal") ||
      (clinicalResult.result === "Normal" && imagingResult.result === "Osteoporosis"));
 
-  const clinicalLabel = clinicalResult?.result === "1" ? "Osteoporosis" : (clinicalResult?.result || "N/A");
-  const imagingLabel = imagingResult?.result || "N/A";
-  const boneAge = imagingResult?.bone_health_age || patient?.age || 60;
-  const actualAge = patient?.age || 58;
+  const actualAge = patient?.age || 62;
+  const boneAge = imagingResult?.bone_health_age || Math.round(actualAge + (imagingRisk > 0.6 ? 12 : imagingRisk > 0.3 ? 4 : -3));
 
-  const handleDoctorFeedback = async (agree: boolean) => {
-    setDoctorFeedback(agree ? "agreed" : "disagreed");
+  const clinicalLabel = clinicalResult?.result || "N/A";
+  const imagingLabel = imagingResult?.result || "N/A";
+
+  const handleDoctorFeedback = async (agreed: boolean) => {
+    setDoctorFeedback(agreed ? "agreed" : "disagreed");
     try {
-      await fetch("http://localhost:8000/api/feedback/doctor", {
+      await fetch("http://127.0.0.1:8000/api/feedback/doctor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          patient_id: patient?.screeningId || "UNK",
-          screening_type: "osteoporosis",
-          predicted_label: imagingLabel,
-          doctor_agreed: agree,
-          doctor_notes: agree ? "Clinically validated" : "Flagged for manual review",
-          doctor_name: "Attending Clinician"
+          screening_id: patient?.screeningId || "UNKNOWN",
+          patient_id: patient?.patientId || "ANONYMOUS",
+          clinical_finding: clinicalLabel,
+          imaging_finding: imagingLabel,
+          doctor_agreed: agreed,
+          notes: agreed ? "Clinician confirmed finding." : "Clinician flagged divergence."
         })
       });
       setFeedbackSubmitted(true);
@@ -88,32 +89,33 @@ export default function OsteoporosisResults() {
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&margin=4&data=SWASTIK-REF-${patient?.screeningId || '101'}-RISK-${Math.round(combinedRisk * 100)}`;
 
   return (
-    <div className="p-8 max-w-5xl mx-auto text-white">
+    <div className="min-h-screen bg-[#FDFBF7] text-[#18181B] py-10 px-4 md:px-8 max-w-5xl mx-auto">
       {/* Header with Patient Card */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3 print:hidden">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-orange-50 text-[#EA580C] border border-orange-200/80 mb-3 print:hidden">
             <MagicWandIcon className="w-3.5 h-3.5" /> DenseNet-121 Clean Architecture • Multimodal Decision Support
           </div>
-          <h1 className="text-4xl font-extrabold mb-4 flex items-center gap-3 tracking-tight">
-            <LayersIcon className="text-emerald-500 w-10 h-10" />
-            Osteoporosis Clinical Assessment
+          <h1 className="text-3xl md:text-5xl font-extrabold mb-4 flex items-center gap-3 tracking-tight text-gray-900">
+            <LayersIcon className="text-[#FF6B4A] w-9 h-9" />
+            Osteoporosis <span className="text-[#FF6B4A]">Clinical Assessment</span>
           </h1>
+
           {patient && (
-            <div className="flex items-center gap-4 border border-white/10 bg-white/5 px-4 py-3 rounded-2xl w-max backdrop-blur-md print:bg-transparent print:border-black/20">
+            <div className="flex items-center gap-4 border border-[#EBE8E3] bg-white px-5 py-3 rounded-2xl w-max shadow-sm print:border-black/20">
               <div className="flex flex-col">
-                <span className="text-xs text-white/40 uppercase tracking-wider print:text-black/50">Patient Name</span>
-                <span className="text-white font-medium text-lg print:text-black">{patient.patientName}</span>
+                <span className="text-[11px] text-gray-400 uppercase tracking-wider font-bold">Patient Name</span>
+                <span className="text-gray-900 font-bold text-base">{patient.patientName}</span>
               </div>
-              <div className="w-px h-8 bg-white/10 mx-2 print:bg-black/10"></div>
+              <div className="w-px h-8 bg-gray-200 mx-2"></div>
               <div className="flex flex-col">
-                <span className="text-xs text-white/40 uppercase tracking-wider print:text-black/50">Age / Gender</span>
-                <span className="text-white font-medium text-lg print:text-black">{patient.age}y • {patient.gender}</span>
+                <span className="text-[11px] text-gray-400 uppercase tracking-wider font-bold">Age / Gender</span>
+                <span className="text-gray-900 font-bold text-base">{patient.age}y • {patient.gender}</span>
               </div>
-              <div className="w-px h-8 bg-white/10 mx-2 print:bg-black/10"></div>
+              <div className="w-px h-8 bg-gray-200 mx-2"></div>
               <div className="flex flex-col">
-                <span className="text-xs text-white/40 uppercase tracking-wider print:text-black/50">Screening ID</span>
-                <span className="text-emerald-400 font-mono text-lg print:text-emerald-600">{patient.screeningId}</span>
+                <span className="text-[11px] text-gray-400 uppercase tracking-wider font-bold">Screening ID</span>
+                <span className="text-[#EA580C] font-mono font-bold text-base">{patient.screeningId}</span>
               </div>
             </div>
           )}
@@ -122,15 +124,15 @@ export default function OsteoporosisResults() {
         <div className="flex items-center gap-3 print:hidden">
           <button 
             onClick={() => setShowDexaModal(true)}
-            className="flex items-center gap-2 bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/30 text-purple-300 px-4 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg backdrop-blur-md hover:scale-105"
+            className="flex items-center gap-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-700 px-4 py-2.5 rounded-full text-xs font-bold transition-all shadow-sm hover:scale-102"
           >
-            <DrawingPinIcon className="w-4 h-4 text-purple-400" />
+            <DrawingPinIcon className="w-4 h-4 text-purple-600" />
             Find DEXA Centres
           </button>
           
           <button 
             onClick={() => window.print()} 
-            className="group flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg hover:scale-105"
+            className="group flex items-center gap-2 bg-[#18181B] hover:bg-black text-white px-5 py-2.5 rounded-full text-xs font-bold transition-all shadow-md shadow-black/10 hover:scale-102"
           >
             <DownloadIcon className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
             Referral PDF
@@ -140,7 +142,7 @@ export default function OsteoporosisResults() {
       
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
-          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #0A0A0B !important; color: white !important; }
+          body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background-color: #ffffff !important; color: black !important; }
           button { display: none !important; }
           .print-hidden { display: none !important; }
           ::-webkit-scrollbar { display: none; }
@@ -148,38 +150,38 @@ export default function OsteoporosisResults() {
       `}} />
 
       {/* Multimodal Ensemble Diagnosis Card */}
-      <div className={`border-2 p-8 rounded-3xl mb-8 shadow-2xl transition-all ${
+      <div className={`border-2 p-7 md:p-8 rounded-3xl mb-8 shadow-[0_15px_45px_-10px_rgba(0,0,0,0.04)] transition-all ${
         isHighRisk 
-          ? "bg-gradient-to-r from-red-950/40 via-amber-950/20 to-black/60 border-amber-500/50 shadow-[0_0_30px_rgba(245,158,11,0.15)]"
-          : "bg-gradient-to-r from-emerald-900/40 to-emerald-600/20 border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.1)]"
+          ? "bg-gradient-to-r from-orange-50/70 via-rose-50/40 to-white border-[#FFD8CC]"
+          : "bg-gradient-to-r from-emerald-50/70 to-white border-emerald-200"
       }`}>
         <div className="flex flex-col lg:flex-row gap-8 items-center justify-between">
           <div className="flex-1 space-y-4">
-            <h2 className={`text-2xl font-bold flex items-center gap-2 ${isHighRisk ? "text-amber-400" : "text-emerald-400"}`}>
+            <h2 className={`text-2xl font-extrabold flex items-center gap-2 ${isHighRisk ? "text-[#E65100]" : "text-emerald-700"}`}>
               <ActivityLogIcon className="w-6 h-6" /> Multimodal Calibrated Synthesis
             </h2>
-            <p className="text-gray-300 text-base leading-relaxed">
-              Fusing clinical lifestyle biomarkers ({clinicalResult?.model_name || "XGBoost Pipeline"}) with deep radiographic bone attenuation ({imagingResult?.model_name || "DenseNet-121 Clean"}).
+            <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+              Fusing clinical lifestyle biomarkers (<strong>{clinicalResult?.model_name || "XGBoost Pipeline"}</strong>) with deep radiographic bone attenuation (<strong>{imagingResult?.model_name || "DenseNet-121 Clean"}</strong>).
             </p>
 
             {/* Bone Health Age Callout */}
-            <div className="inline-flex items-center gap-4 bg-white/5 border border-white/10 px-5 py-3 rounded-2xl">
+            <div className="inline-flex items-center gap-4 bg-white border border-[#EBE8E3] px-5 py-3 rounded-2xl shadow-sm">
               <div className="flex flex-col">
-                <span className="text-xs text-white/50 uppercase">Chronological Age</span>
-                <span className="text-xl font-bold text-white">{actualAge} yrs</span>
+                <span className="text-[11px] text-gray-400 uppercase font-semibold">Chronological Age</span>
+                <span className="text-lg font-bold text-gray-900">{actualAge} yrs</span>
               </div>
-              <div className="w-px h-8 bg-white/10"></div>
+              <div className="w-px h-8 bg-gray-200"></div>
               <div className="flex flex-col">
-                <span className="text-xs text-amber-400/80 uppercase font-semibold">Bone Structural Age</span>
-                <span className={`text-xl font-extrabold ${boneAge > actualAge ? "text-amber-400" : "text-emerald-400"}`}>
+                <span className="text-[11px] text-[#EA580C] uppercase font-bold">Bone Structural Age</span>
+                <span className={`text-lg font-extrabold ${boneAge > actualAge ? "text-[#E65100]" : "text-emerald-600"}`}>
                   {boneAge} yrs {boneAge > actualAge ? `(+${boneAge - actualAge}y aging)` : "(-Optimal)"}
                 </span>
               </div>
             </div>
 
             {isDiscordant && (
-              <div className="flex items-start gap-3 bg-amber-500/10 border border-amber-500/30 p-4 rounded-2xl text-amber-300 text-sm">
-                <ExclamationTriangleIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-400" />
+              <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 p-4 rounded-2xl text-amber-800 text-xs md:text-sm">
+                <ExclamationTriangleIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-600" />
                 <span>
                   <strong>Clinical Note on Modality Variance:</strong> Clinical questionnaire suggests high fracture vulnerability ({clinicalLabel}), while plain X-ray features appear early-stage ({imagingLabel}). Plain radiographs often appear normal until &gt;30% bone mineral depletion occurs. Confirmatory DEXA scan advised.
                 </span>
@@ -187,27 +189,27 @@ export default function OsteoporosisResults() {
             )}
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="bg-black/60 p-6 rounded-3xl border border-white/10 min-w-[260px] text-center shadow-xl">
-              <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Composite Triage Status</p>
-              <p className={`text-3xl font-extrabold ${isHighRisk ? "text-amber-400" : "text-emerald-400"}`}>
+          <div className="flex items-center gap-5">
+            <div className="bg-white p-6 rounded-3xl border border-[#EBE8E3] min-w-[240px] text-center shadow-md">
+              <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold mb-1">Composite Triage Status</p>
+              <p className={`text-2xl font-black ${isHighRisk ? "text-[#E65100]" : "text-emerald-600"}`}>
                 {isHighRisk ? "Elevated Risk" : "Normal Baseline"}
               </p>
               <div className={`mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
-                isHighRisk ? "bg-amber-500/20 text-amber-300 border border-amber-500/30" : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                isHighRisk ? "bg-[#FFEFEA] text-[#E65100] border border-[#FFD8CC]" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
               }`}>
                 {isHighRisk ? "DEXA Referral Indicated" : "Annual Monitoring"}
               </div>
-              <div className="mt-4 pt-3 border-t border-white/10">
+              <div className="mt-4 pt-3 border-t border-gray-100">
                 <p className="text-gray-400 text-xs">Vulnerability Index</p>
-                <p className="text-2xl font-bold font-mono text-white mt-0.5">{(combinedRisk * 100).toFixed(1)}%</p>
+                <p className="text-2xl font-bold font-mono text-gray-900 mt-0.5">{(combinedRisk * 100).toFixed(1)}%</p>
               </div>
             </div>
 
             {/* QR Code Card for Doctor */}
-            <div className="bg-white p-3 rounded-2xl flex flex-col items-center justify-center text-black shadow-xl">
-              <img src={qrUrl} alt="Doctor Referral QR" className="w-28 h-28 object-contain" />
-              <span className="text-[10px] font-mono font-bold mt-1 text-gray-700">Scan for e-Referral</span>
+            <div className="bg-white p-3 rounded-2xl flex flex-col items-center justify-center text-black border border-[#EBE8E3] shadow-md">
+              <img src={qrUrl} alt="Doctor Referral QR" className="w-24 h-24 object-contain" />
+              <span className="text-[10px] font-mono font-bold mt-1 text-gray-600">Scan for e-Referral</span>
             </div>
           </div>
         </div>
@@ -216,23 +218,23 @@ export default function OsteoporosisResults() {
       {/* Grid: Deep Learning XAI Grad-CAM on Left, Breakdown on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* Grad-CAM Heatmap Viewer */}
-        <div className="bg-black/40 border border-white/10 p-6 rounded-3xl backdrop-blur-md flex flex-col justify-between">
+        <div className="bg-white border border-[#EBE8E3] p-6 rounded-3xl shadow-[0_15px_40px_-10px_rgba(0,0,0,0.04)] flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-emerald-400 flex items-center gap-2">
-                <MagicWandIcon className="w-5 h-5" /> Explainable AI (Grad-CAM)
+              <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <MagicWandIcon className="w-5 h-5 text-[#FF6B4A]" /> Explainable AI (Grad-CAM)
               </h2>
               {imagingResult?.gradcam_image && (
-                <div className="flex items-center gap-1 bg-white/10 p-1 rounded-xl text-xs">
+                <div className="flex items-center gap-1 bg-[#FAF9F6] p-1 rounded-xl text-xs border border-gray-200/80">
                   <button 
                     onClick={() => setShowHeatmap(true)}
-                    className={`px-3 py-1 rounded-lg font-medium transition-all ${showHeatmap ? "bg-emerald-600 text-white font-bold" : "text-gray-400 hover:text-white"}`}
+                    className={`px-3 py-1 rounded-lg font-medium transition-all ${showHeatmap ? "bg-[#18181B] text-white font-bold" : "text-gray-600 hover:text-black"}`}
                   >
                     Heatmap
                   </button>
                   <button 
                     onClick={() => setShowHeatmap(false)}
-                    className={`px-3 py-1 rounded-lg font-medium transition-all ${!showHeatmap ? "bg-emerald-600 text-white font-bold" : "text-gray-400 hover:text-white"}`}
+                    className={`px-3 py-1 rounded-lg font-medium transition-all ${!showHeatmap ? "bg-[#18181B] text-white font-bold" : "text-gray-600 hover:text-black"}`}
                   >
                     Plain X-Ray
                   </button>
@@ -241,40 +243,40 @@ export default function OsteoporosisResults() {
             </div>
 
             {imagingResult?.gradcam_image ? (
-              <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black/60 aspect-square max-h-[360px] mx-auto flex items-center justify-center">
+              <div className="relative rounded-2xl overflow-hidden border border-gray-200 bg-[#FAF9F6] aspect-square max-h-[340px] mx-auto flex items-center justify-center">
                 <img 
                   src={showHeatmap ? imagingResult.gradcam_image : (imagingResult.original_preview || imagingResult.gradcam_image)} 
                   alt="Radiograph Analysis" 
                   className="w-full h-full object-contain p-2"
                 />
                 {showHeatmap && (
-                  <div className="absolute bottom-3 left-3 right-3 bg-black/80 backdrop-blur-md px-3 py-2 rounded-xl text-xs border border-white/10 flex items-center justify-between">
-                    <span className="text-gray-300">Target: Proximal Tibia / Condylar Trabeculae</span>
-                    <span className="text-amber-400 font-semibold font-mono">DenseNet-121 Attention</span>
+                  <div className="absolute bottom-3 left-3 right-3 bg-white/95 backdrop-blur-md px-3 py-2 rounded-xl text-xs border border-gray-200 shadow-sm flex items-center justify-between">
+                    <span className="text-gray-700">Target: Proximal Tibia Condyle</span>
+                    <span className="text-[#EA580C] font-semibold font-mono">DenseNet-121 Attention</span>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="h-64 rounded-2xl border border-dashed border-white/10 flex items-center justify-center text-gray-500 text-sm">
+              <div className="h-64 rounded-2xl border border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-sm">
                 No radiograph heatmap available.
               </div>
             )}
           </div>
 
-          <div className="mt-4 pt-4 border-t border-white/10 text-xs text-gray-400 flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-emerald-400">
+          <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 flex items-center justify-between">
+            <span className="flex items-center gap-1.5 text-[#EA580C] font-medium">
               <LockClosedIcon className="w-4 h-4" /> CLAHE Contrast Enhancement Applied
             </span>
-            <span>Target Class: {imagingLabel}</span>
+            <span>Target Class: <strong>{imagingLabel}</strong></span>
           </div>
         </div>
 
         {/* Detailed Probabilities & Clinical Breakdown */}
         <div className="space-y-6">
           {/* Imaging Probabilities */}
-          <div className="bg-black/40 border border-white/10 p-6 rounded-3xl">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <LayersIcon className="w-5 h-5 text-emerald-400" /> DenseNet-121 Class Probabilities
+          <div className="bg-white border border-[#EBE8E3] p-6 rounded-3xl shadow-[0_15px_40px_-10px_rgba(0,0,0,0.04)]">
+            <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <LayersIcon className="w-5 h-5 text-[#FF6B4A]" /> DenseNet-121 Class Probabilities
             </h3>
             
             {imagingResult?.probabilities ? (
@@ -284,11 +286,11 @@ export default function OsteoporosisResults() {
                   const isWinner = label.toLowerCase() === imagingLabel.toLowerCase();
                   return (
                     <div key={label} className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span className={isWinner ? "font-bold text-emerald-300" : "text-gray-400"}>{label}</span>
-                        <span className="font-mono font-medium text-white">{val.toFixed(1)}%</span>
+                      <div className="flex justify-between text-xs">
+                        <span className={isWinner ? "font-bold text-gray-900" : "text-gray-500"}>{label}</span>
+                        <span className="font-mono font-medium text-gray-900">{val.toFixed(1)}%</span>
                       </div>
-                      <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                      <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
                         <div 
                           className={`h-full rounded-full transition-all duration-500 ${
                             label === "Osteoporosis" ? "bg-rose-500" : label === "Osteopenia" ? "bg-amber-500" : "bg-emerald-500"
@@ -301,60 +303,60 @@ export default function OsteoporosisResults() {
                 })}
               </div>
             ) : (
-              <p className="text-gray-500 text-sm">Probability distribution unavailable.</p>
+              <p className="text-gray-400 text-xs">Probability distribution unavailable.</p>
             )}
 
-            <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center text-xs text-gray-400">
+            <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
               <span>Overall Radiograph Diagnosis:</span>
-              <span className="font-bold text-sm text-emerald-400">{imagingLabel}</span>
+              <span className="font-bold text-sm text-gray-900">{imagingLabel}</span>
             </div>
           </div>
 
           {/* Clinical Questionnaire Card */}
-          <div className="bg-black/40 border border-white/10 p-6 rounded-3xl">
-            <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
-              <ActivityLogIcon className="w-5 h-5 text-emerald-400" /> Clinical Lifestyle Pipeline
+          <div className="bg-white border border-[#EBE8E3] p-6 rounded-3xl shadow-[0_15px_40px_-10px_rgba(0,0,0,0.04)]">
+            <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+              <ActivityLogIcon className="w-5 h-5 text-[#FF6B4A]" /> Clinical Lifestyle Pipeline
             </h3>
             {clinicalResult ? (
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between py-1 border-b border-white/10">
-                  <span className="text-gray-400">Risk Prediction:</span>
-                  <span className={`font-bold ${clinicalLabel === "Osteoporosis" ? "text-amber-400" : "text-emerald-400"}`}>
+              <div className="space-y-2 text-xs">
+                <div className="flex justify-between py-1 border-b border-gray-100">
+                  <span className="text-gray-500">Risk Prediction:</span>
+                  <span className={`font-bold ${clinicalLabel === "Osteoporosis" ? "text-rose-600" : "text-emerald-600"}`}>
                     {clinicalLabel}
                   </span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-white/10">
-                  <span className="text-gray-400">Model Probability:</span>
-                  <span className="font-mono text-white">{(clinicalRisk * 100).toFixed(1)}%</span>
+                <div className="flex justify-between py-1 border-b border-gray-100">
+                  <span className="text-gray-500">Model Probability:</span>
+                  <span className="font-mono text-gray-900 font-bold">{(clinicalRisk * 100).toFixed(1)}%</span>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">Pipeline: {clinicalResult.model_name}</p>
+                <p className="text-[11px] text-gray-400 mt-2">Pipeline: {clinicalResult.model_name}</p>
               </div>
             ) : (
-              <p className="text-gray-500 text-sm">Questionnaire screening was skipped.</p>
+              <p className="text-gray-400 text-xs">Questionnaire screening was skipped.</p>
             )}
           </div>
 
           {/* Clinician Feedback Loop (Active Learning) */}
-          <div className="bg-white/5 border border-white/10 p-5 rounded-3xl flex items-center justify-between print:hidden">
+          <div className="bg-white border border-[#EBE8E3] p-5 rounded-3xl shadow-sm flex items-center justify-between print:hidden">
             <div>
-              <p className="text-sm font-semibold text-white">Clinician Review & Feedback</p>
-              <p className="text-xs text-gray-400">Does this finding match clinical judgment?</p>
+              <p className="text-xs font-bold text-gray-900">Clinician Review & Feedback</p>
+              <p className="text-[11px] text-gray-500">Does this finding match clinical judgment?</p>
             </div>
             {feedbackSubmitted ? (
-              <span className="text-xs text-emerald-400 font-bold flex items-center gap-1.5">
+              <span className="text-xs text-emerald-600 font-bold flex items-center gap-1.5">
                 <CheckCircledIcon className="w-4 h-4" /> Feedback Logged
               </span>
             ) : (
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleDoctorFeedback(true)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/30 transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-all"
                 >
                   <ThumbsUp className="w-3.5 h-3.5" /> Agree
                 </button>
                 <button
                   onClick={() => handleDoctorFeedback(false)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 border border-rose-500/30 transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 transition-all"
                 >
                   <ThumbsDown className="w-3.5 h-3.5" /> Disagree
                 </button>
@@ -365,44 +367,44 @@ export default function OsteoporosisResults() {
       </div>
 
       {/* Action Footer */}
-      <div className="flex items-center justify-between border-t border-white/10 pt-6 print:hidden">
+      <div className="flex items-center justify-between border-t border-gray-200 pt-6 print:hidden">
         <Link 
           href="/" 
-          className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm"
+          className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors text-xs font-semibold"
         >
-          <ReloadIcon className="w-4 h-4" /> Start New Patient Screening
+          <ReloadIcon className="w-3.5 h-3.5" /> Start New Patient Screening
         </Link>
 
         <div className="flex items-center gap-3">
           <Link
             href="/screening/lifestyle-simulator"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold bg-white/10 hover:bg-white/20 text-white transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold bg-[#18181B] hover:bg-black text-white transition-all shadow-md shadow-black/10 hover:scale-102"
           >
-            What-If Lifestyle Simulator <ArrowRightIcon className="w-4 h-4" />
+            What-If Lifestyle Simulator <ArrowRightIcon className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>
 
       {/* DEXA Centres Modal */}
       {showDexaModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-[#121316] border border-white/10 rounded-3xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-[#EBE8E3] rounded-3xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto shadow-2xl">
             <div className="flex justify-between items-center mb-4">
               <div>
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                  <DrawingPinIcon className="w-5 h-5 text-purple-400" /> Vetted DEXA Diagnostic Centres
+                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <DrawingPinIcon className="w-5 h-5 text-purple-600" /> Vetted DEXA Diagnostic Centres
                 </h3>
-                <p className="text-xs text-gray-400">Referral-ready facilities across Punjab & Chandigarh</p>
+                <p className="text-xs text-gray-500">Referral-ready facilities across Punjab & Chandigarh</p>
               </div>
               <button 
                 onClick={() => setShowDexaModal(false)}
-                className="text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10"
+                className="text-gray-400 hover:text-black p-1.5 rounded-full hover:bg-gray-100 transition-colors"
               >
                 <Cross2Icon className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {[
                 {
                   name: "Post Graduate Institute of Medical Education & Research (PGIMER)",
@@ -440,17 +442,17 @@ export default function OsteoporosisResults() {
                   type: "Government Medical College"
                 }
               ].map((centre, i) => (
-                <div key={i} className="p-4 rounded-2xl bg-white/5 border border-white/5 hover:border-purple-500/30 transition-all flex justify-between items-center">
+                <div key={i} className="p-4 rounded-2xl bg-[#FAF9F6] border border-gray-100 hover:border-purple-300 transition-all flex justify-between items-center">
                   <div>
-                    <h4 className="font-bold text-white text-sm">{centre.name}</h4>
-                    <p className="text-xs text-gray-400">{centre.city} • {centre.type}</p>
-                    <p className="text-xs text-purple-400 mt-1 flex items-center gap-1 font-mono">
+                    <h4 className="font-bold text-gray-900 text-sm">{centre.name}</h4>
+                    <p className="text-xs text-gray-500">{centre.city} • {centre.type}</p>
+                    <p className="text-xs text-purple-700 mt-1 flex items-center gap-1 font-mono">
                       <Phone className="w-3 h-3" /> {centre.phone}
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs font-mono font-bold text-emerald-400">{centre.cost}</span>
-                    <p className="text-[10px] text-gray-500">Typical Scan Cost</p>
+                    <span className="text-xs font-mono font-bold text-emerald-700">{centre.cost}</span>
+                    <p className="text-[10px] text-gray-400">Typical Scan Cost</p>
                   </div>
                 </div>
               ))}
@@ -459,7 +461,7 @@ export default function OsteoporosisResults() {
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => setShowDexaModal(false)}
-                className="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm"
+                className="px-5 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold text-xs transition-colors"
               >
                 Close Directory
               </button>

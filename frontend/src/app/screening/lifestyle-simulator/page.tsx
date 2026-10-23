@@ -23,67 +23,57 @@ export default function LifestyleSimulatorPage() {
   const [baselineRisk, setBaselineRisk] = useState(68); // % baseline fracture risk
 
   // Calculate dynamic projected risk and bone health age
-  // Calcium: optimal >= 1000mg reduces risk by up to 18%
   const calciumFactor = Math.min((calcium - 400) / 800, 1.0) * 18;
-  
-  // Sunlight: 20-30 mins optimal reduces risk by up to 14%
   const sunFactor = Math.min(sunExposure / 30, 1.0) * 14;
-  
-  // Weight-bearing exercise: 3-5 days/week stimulates osteoblasts, reduces risk by up to 22%
   const exerciseFactor = Math.min(exerciseDays / 4, 1.25) * 22;
-  
-  // Smoking penalty: adds 15% risk
   const smokingPenalty = isSmoker ? 15 : 0;
   
   const totalReduction = Math.max(0, calciumFactor + sunFactor + exerciseFactor - smokingPenalty);
   const projectedRisk = Math.max(12, Math.min(95, baselineRisk - totalReduction));
   
-  // Bone Age calculation:
-  // Each 5% reduction in risk reverses biological bone aging by ~1 year
   const boneAgeOffset = Math.round(totalReduction / 4.5);
   const currentBoneAge = age + 12; // Baseline impaired
   const simulatedBoneAge = Math.max(age - 2, currentBoneAge - boneAgeOffset);
 
   return (
-    <div className="min-h-screen p-6 md:p-10 max-w-5xl mx-auto text-white">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6">
       {/* Top Navigation */}
       <div className="flex items-center justify-between mb-8">
         <Link 
           href="/" 
-          className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 font-medium transition-colors"
         >
           <ArrowLeftIcon className="w-4 h-4" /> Back to Home
         </Link>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-[#FFEFEA] text-[#E65100] border border-[#FFD8CC]">
           <MagicWandIcon className="w-3.5 h-3.5" /> Interactive Prognostic Simulation
         </div>
       </div>
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2 flex items-center gap-3">
-          <MixerHorizontalIcon className="w-9 h-9 text-emerald-400" />
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900 mb-2">
           What-If Lifestyle Simulator
         </h1>
-        <p className="text-gray-400 max-w-2xl text-base">
+        <p className="text-gray-600 max-w-2xl text-sm md:text-base">
           Adjust nutritional, exercise, and environmental parameters to observe projected fracture risk reduction and bone density preservation over a 5-year horizon.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
         {/* Sliders Control Panel (7 cols) */}
-        <div className="lg:col-span-7 space-y-6 bg-white/5 border border-white/10 p-6 md:p-8 rounded-3xl backdrop-blur-md">
-          <h2 className="text-xl font-bold flex items-center gap-2 text-white border-b border-white/10 pb-4">
-            Modifiable Risk Factors
+        <div className="lg:col-span-7 space-y-6 bg-white border border-[#EBE8E3] p-6 sm:p-8 rounded-3xl shadow-[0_15px_45px_-10px_rgba(0,0,0,0.03)]">
+          <h2 className="text-lg font-bold text-gray-900 border-b border-[#EBE8E3] pb-4 flex items-center gap-2">
+            <MixerHorizontalIcon className="w-5 h-5 text-[#FF6B4A]" /> Modifiable Risk Factors
           </h2>
 
           {/* Slider 1: Calcium */}
           <div className="space-y-2">
             <div className="flex justify-between items-center text-sm">
-              <span className="flex items-center gap-2 text-gray-300 font-medium">
-                <LayersIcon className="w-4 h-4 text-emerald-400" /> Daily Dietary Calcium
+              <span className="flex items-center gap-2 text-gray-700 font-semibold">
+                <LayersIcon className="w-4 h-4 text-[#FF6B4A]" /> Daily Dietary Calcium
               </span>
-              <span className="font-mono font-bold text-emerald-400 text-base">{calcium} mg/day</span>
+              <span className="font-bold text-[#FF6B4A] text-base">{calcium} mg/day</span>
             </div>
             <input 
               type="range" 
@@ -92,22 +82,22 @@ export default function LifestyleSimulatorPage() {
               step={50}
               value={calcium}
               onChange={(e) => setCalcium(Number(e.target.value))}
-              className="w-full accent-emerald-500 bg-white/10 rounded-lg cursor-pointer h-2"
+              className="w-full accent-[#FF6B4A] bg-gray-100 rounded-lg cursor-pointer h-2"
             />
-            <div className="flex justify-between text-[11px] text-gray-500">
+            <div className="flex justify-between text-[11px] text-gray-400 font-medium">
               <span>300 mg (Deficient)</span>
-              <span>1000 mg (Recommended RDA)</span>
-              <span>1500 mg</span>
+              <span>1,000 mg (Recommended RDA)</span>
+              <span>1,500 mg</span>
             </div>
           </div>
 
           {/* Slider 2: Sunlight / Vitamin D */}
           <div className="space-y-2">
             <div className="flex justify-between items-center text-sm">
-              <span className="flex items-center gap-2 text-gray-300 font-medium">
-                <SunIcon className="w-4 h-4 text-amber-400" /> Daily Midday Sun Exposure (Vit D3)
+              <span className="flex items-center gap-2 text-gray-700 font-semibold">
+                <SunIcon className="w-4 h-4 text-amber-500" /> Daily Midday Sun Exposure (Vit D3)
               </span>
-              <span className="font-mono font-bold text-amber-400 text-base">{sunExposure} mins/day</span>
+              <span className="font-bold text-amber-600 text-base">{sunExposure} mins/day</span>
             </div>
             <input 
               type="range" 
@@ -116,9 +106,9 @@ export default function LifestyleSimulatorPage() {
               step={5}
               value={sunExposure}
               onChange={(e) => setSunExposure(Number(e.target.value))}
-              className="w-full accent-amber-500 bg-white/10 rounded-lg cursor-pointer h-2"
+              className="w-full accent-amber-500 bg-gray-100 rounded-lg cursor-pointer h-2"
             />
-            <div className="flex justify-between text-[11px] text-gray-500">
+            <div className="flex justify-between text-[11px] text-gray-400 font-medium">
               <span>0 min</span>
               <span>20-30 min (Optimal Synthesis)</span>
               <span>60 min</span>
@@ -128,10 +118,10 @@ export default function LifestyleSimulatorPage() {
           {/* Slider 3: Weight-bearing Exercise */}
           <div className="space-y-2">
             <div className="flex justify-between items-center text-sm">
-              <span className="flex items-center gap-2 text-gray-300 font-medium">
-                <ActivityLogIcon className="w-4 h-4 text-blue-400" /> Weight-Bearing & Resistance Exercise
+              <span className="flex items-center gap-2 text-gray-700 font-semibold">
+                <ActivityLogIcon className="w-4 h-4 text-emerald-600" /> Weight-Bearing & Resistance Exercise
               </span>
-              <span className="font-mono font-bold text-blue-400 text-base">{exerciseDays} days/week</span>
+              <span className="font-bold text-emerald-600 text-base">{exerciseDays} days/week</span>
             </div>
             <input 
               type="range" 
@@ -140,9 +130,9 @@ export default function LifestyleSimulatorPage() {
               step={1}
               value={exerciseDays}
               onChange={(e) => setExerciseDays(Number(e.target.value))}
-              className="w-full accent-blue-500 bg-white/10 rounded-lg cursor-pointer h-2"
+              className="w-full accent-emerald-500 bg-gray-100 rounded-lg cursor-pointer h-2"
             />
-            <div className="flex justify-between text-[11px] text-gray-500">
+            <div className="flex justify-between text-[11px] text-gray-400 font-medium">
               <span>Sedentary (0)</span>
               <span>3-4 days (Osteogenic stimulus)</span>
               <span>Daily (7)</span>
@@ -150,17 +140,17 @@ export default function LifestyleSimulatorPage() {
           </div>
 
           {/* Toggle: Smoking */}
-          <div className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5">
+          <div className="flex items-center justify-between p-4 rounded-2xl bg-[#FAF9F6] border border-[#EBE8E3]">
             <div>
-              <p className="text-sm font-semibold text-white">Active Tobacco / Nicotine Use</p>
-              <p className="text-xs text-gray-400">Directly inhibits osteoblasts and accelerates bone resorption</p>
+              <p className="text-sm font-bold text-gray-900">Active Tobacco / Nicotine Use</p>
+              <p className="text-xs text-gray-500">Directly inhibits osteoblasts and accelerates bone resorption</p>
             </div>
             <button
               onClick={() => setIsSmoker(!isSmoker)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                 isSmoker 
-                  ? "bg-rose-500/20 text-rose-300 border border-rose-500/30" 
-                  : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                  ? "bg-rose-50 text-rose-700 border border-rose-200" 
+                  : "bg-emerald-50 text-emerald-700 border border-emerald-200"
               }`}
             >
               {isSmoker ? "Yes (Active Smoker)" : "No (Non-Smoker)"}
@@ -168,8 +158,8 @@ export default function LifestyleSimulatorPage() {
           </div>
 
           {/* Clinical Evidence Note */}
-          <div className="text-xs text-gray-400 bg-black/40 p-3.5 rounded-2xl border border-white/5 flex items-start gap-2">
-            <LockClosedIcon className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+          <div className="text-xs text-gray-600 bg-[#FAF9F6] p-4 rounded-2xl border border-[#EBE8E3] flex items-start gap-2.5">
+            <LockClosedIcon className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
             <span>
               <strong>Scientific Basis:</strong> Modeled after the WHO FRAX risk matrix and IOF (International Osteoporosis Foundation) intervention guidelines.
             </span>
@@ -178,28 +168,26 @@ export default function LifestyleSimulatorPage() {
 
         {/* Live Prognostic Gauge (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-gradient-to-br from-emerald-950/40 via-black to-blue-950/30 border border-emerald-500/30 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full pointer-events-none" />
-
-            <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-bold mb-6 flex items-center gap-2">
-              <HeartFilledIcon className="w-4 h-4 text-rose-400" /> Projected Health Trajectory
+          <div className="bg-white border border-[#EBE8E3] p-6 sm:p-8 rounded-3xl shadow-[0_15px_45px_-10px_rgba(0,0,0,0.03)] relative overflow-hidden">
+            <h3 className="text-xs uppercase tracking-wider text-[#FF6B4A] font-bold mb-6 flex items-center gap-2">
+              <HeartFilledIcon className="w-4 h-4 text-[#FF6B4A]" /> Projected Health Trajectory
             </h3>
 
             {/* Bone Health Age Comparison */}
-            <div className="bg-black/60 border border-white/10 p-5 rounded-2xl mb-6">
+            <div className="bg-[#FAF9F6] border border-[#EBE8E3] p-5 rounded-2xl mb-6">
               <div className="flex justify-between items-center mb-3">
-                <span className="text-xs text-gray-400">Chronological Age</span>
-                <span className="text-sm font-bold text-white">{age} Years</span>
+                <span className="text-xs text-gray-500 font-medium">Chronological Age</span>
+                <span className="text-sm font-bold text-gray-900">{age} Years</span>
               </div>
               <div className="flex justify-between items-center mb-2">
-                <span className="text-xs text-gray-400">Current Bone Structural Age</span>
-                <span className="text-sm font-bold text-rose-400">{currentBoneAge} Years (+12y)</span>
+                <span className="text-xs text-gray-500 font-medium">Current Bone Structural Age</span>
+                <span className="text-sm font-bold text-rose-600">{currentBoneAge} Years (+12y)</span>
               </div>
-              <div className="pt-2 border-t border-white/10 flex justify-between items-center">
-                <span className="text-xs font-bold text-emerald-400">Simulated Bone Age</span>
-                <span className="text-2xl font-black font-mono text-emerald-300">{simulatedBoneAge} Years</span>
+              <div className="pt-3 border-t border-[#EBE8E3] flex justify-between items-center">
+                <span className="text-xs font-bold text-emerald-700">Simulated Bone Age</span>
+                <span className="text-2xl font-black text-emerald-600">{simulatedBoneAge} Years</span>
               </div>
-              <p className="text-[11px] text-emerald-400/80 mt-1">
+              <p className="text-[11px] text-emerald-700 mt-1 font-semibold">
                 Potential biological rejuvenation: <strong>-{boneAgeOffset} Years</strong>
               </p>
             </div>
@@ -207,25 +195,25 @@ export default function LifestyleSimulatorPage() {
             {/* Fracture Risk Gauge */}
             <div className="space-y-3 mb-6">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-300">5-Year Fracture Risk Probability</span>
-                <span className="font-mono font-extrabold text-2xl text-emerald-400">{projectedRisk.toFixed(1)}%</span>
+                <span className="text-gray-700 font-semibold">5-Year Fracture Risk Probability</span>
+                <span className="font-black text-2xl text-[#FF6B4A]">{projectedRisk.toFixed(1)}%</span>
               </div>
-              <div className="w-full h-3 rounded-full bg-white/10 overflow-hidden">
+              <div className="w-full h-3 rounded-full bg-gray-100 overflow-hidden">
                 <div 
-                  className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 transition-all duration-300"
+                  className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-amber-500 to-[#FF6B4A] transition-all duration-300"
                   style={{ width: `${projectedRisk}%` }}
                 />
               </div>
-              <div className="flex justify-between text-xs text-gray-400">
+              <div className="flex justify-between text-xs text-gray-500 font-medium">
                 <span>Baseline: {baselineRisk}%</span>
-                <span className="text-emerald-400 font-bold">Reduction: -{totalReduction.toFixed(1)}%</span>
+                <span className="text-emerald-600 font-bold">Reduction: -{totalReduction.toFixed(1)}%</span>
               </div>
             </div>
 
             {/* Dynamic Clinical Takeaway */}
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/5 text-xs text-gray-300 space-y-1">
-              <p className="font-bold text-white">Projected Clinical Outcome:</p>
-              <p>
+            <div className="p-4 rounded-2xl bg-[#FFF8F6] border border-[#FFD8CC] text-xs text-gray-700 space-y-1">
+              <p className="font-bold text-gray-900">Projected Clinical Outcome:</p>
+              <p className="leading-relaxed">
                 {totalReduction >= 25 
                   ? "Outstanding intervention impact. Significant reduction in proximal femur and vertebral compression risk."
                   : totalReduction >= 12
@@ -237,7 +225,7 @@ export default function LifestyleSimulatorPage() {
             <div className="mt-6">
               <Link
                 href="/screening/worker-queue"
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg hover:scale-105"
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full bg-[#FF6B4A] hover:bg-[#E85938] text-white font-semibold text-sm transition-all shadow-[0_8px_20px_-4px_rgba(255,107,74,0.35)] hover:-translate-y-0.5"
               >
                 Go to Community Screening Queue <ArrowRightIcon className="w-4 h-4" />
               </Link>

@@ -2,87 +2,140 @@
 
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Activity, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { 
+  ArrowLeftIcon, 
+  ChevronRightIcon, 
+  ActivityLogIcon, 
+  CameraIcon,
+  ImageIcon
+} from "@radix-ui/react-icons";
 
-const joints = [
-  { id: "knee", label: "Knee", icon: "🦵", status: "ready", desc: "Kinematic Gait & KAM Analysis" },
-  { id: "hip", label: "Hip", icon: "🧍", status: "ready", desc: "Hip OA Gait Classification" },
-  { id: "shoulder", label: "Shoulder", icon: "💪", status: "ready", desc: "ROM & Kinematics" },
-  { id: "hand", label: "Hand/Wrist", icon: "🖐️", status: "ready", desc: "Tremor & Dexterity" },
-  { id: "spine", label: "Spine", icon: "🦴", status: "ready", desc: "Posture & Scoliosis" },
+const protocols = [
+  { 
+    id: "osteo-radiograph", 
+    label: "Osteoporosis Radiograph & Biomarkers", 
+    category: "Radiographic AI",
+    icon: "🦴", 
+    status: "ready", 
+    desc: "DenseNet-121 trabecular matrix evaluation with CLAHE enhancement & Grad-CAM heatmaps",
+    href: "/screening/osteoporosis/basic-questionnaire",
+    featured: true
+  },
+  { 
+    id: "knee", 
+    label: "Knee Osteoarthritis Gait & Squat", 
+    category: "Computer Vision",
+    icon: "🦵", 
+    status: "ready", 
+    desc: "Real-time kinematic Knee Adduction Moment (KAM) estimation & flexion angle tracking",
+    href: "/screening/camera?joint=knee"
+  },
+  { 
+    id: "hip", 
+    label: "Hip Functional Excursion", 
+    category: "Computer Vision",
+    icon: "🧍", 
+    status: "ready", 
+    desc: "Single-leg stance pelvic drop (Trendelenburg sign) & frontal plane stability",
+    href: "/screening/camera?joint=hip"
+  },
+  { 
+    id: "spine", 
+    label: "Spine & Postural Alignment", 
+    category: "Computer Vision",
+    icon: "🧘", 
+    status: "ready", 
+    desc: "Thoracic kyphosis curvature & sagittal balance screening for fragility wedges",
+    href: "/screening/camera?joint=spine"
+  },
+  { 
+    id: "shoulder", 
+    label: "Shoulder Range of Motion", 
+    category: "Kinematics",
+    icon: "💪", 
+    status: "ready", 
+    desc: "Abduction/external rotation biomechanics and rotator impingement screening",
+    href: "/screening/camera?joint=shoulder"
+  },
+  { 
+    id: "opportunistic", 
+    label: "Opportunistic Knee X-Ray Screening", 
+    category: "X-Ray Screening",
+    icon: "🩻", 
+    status: "ready", 
+    desc: "Upload existing routine knee X-ray to check for bone density loss flags",
+    href: "/screening/xray"
+  },
 ];
 
 export default function JointSelectionPage() {
   const router = useRouter();
 
-  const handleSelect = (jointId: string, status: string) => {
-    if (status !== "ready") return;
-    router.push(`/screening/camera?joint=${jointId}`);
-  };
-
   return (
-    <div className="min-h-screen bg-black text-white p-6 flex flex-col items-center">
-      
-      {/* Header */}
-      <div className="w-full max-w-4xl flex items-center justify-between mb-12 mt-4">
-        <button 
-          onClick={() => router.back()}
-          className="flex items-center text-gray-400 hover:text-white transition-colors"
+    <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      {/* Header Bar */}
+      <div className="w-full flex items-center justify-between mb-8">
+        <Link 
+          href="/" 
+          className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium"
         >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to Clinical
-        </button>
-        <div className="flex items-center space-x-2 text-blue-500">
-          <Activity className="w-6 h-6" />
-          <span className="font-semibold text-lg tracking-wide">PHASE 2: MOVEMENT</span>
-        </div>
+          <ArrowLeftIcon className="w-4 h-4" /> Back to Home
+        </Link>
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#FFEFEA] text-[#E65100] border border-[#FFD8CC]">
+          <ActivityLogIcon className="w-3.5 h-3.5" /> Protocol Selection
+        </span>
       </div>
 
-      <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-          Select Joint for Assessment
+      <div className="text-center mb-12">
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900 mb-3">
+          Select Clinical Assessment Protocol
         </h1>
-        <p className="text-gray-400 text-lg max-w-xl mx-auto">
-          Choose the primary area of concern to initiate the AI-assisted functional movement and kinematic analysis.
+        <p className="text-gray-600 text-sm md:text-base max-w-2xl mx-auto">
+          Choose a screening pathway. Swastik combines non-invasive browser computer vision for joint biomechanics with deep convolutional neural networks for radiographic bone density.
         </p>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-5xl">
-        {joints.map((joint, idx) => (
+      {/* Protocol Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        {protocols.map((protocol, idx) => (
           <motion.div
-            key={joint.id}
-            initial={{ opacity: 0, y: 20 }}
+            key={protocol.id}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
-            onClick={() => handleSelect(joint.id, joint.status)}
+            transition={{ delay: idx * 0.08 }}
+            onClick={() => router.push(protocol.href)}
             className={`
-              relative p-6 rounded-2xl border backdrop-blur-sm cursor-pointer transition-all duration-300
-              ${joint.status === 'ready' 
-                ? 'border-blue-500/30 bg-blue-900/10 hover:bg-blue-800/20 hover:border-blue-400 hover:-translate-y-1' 
-                : 'border-gray-800 bg-gray-900/30 opacity-60 cursor-not-allowed'}
+              relative p-6 sm:p-8 rounded-3xl border cursor-pointer transition-all duration-300 flex flex-col justify-between
+              bg-white hover:-translate-y-1 shadow-[0_15px_45px_-10px_rgba(0,0,0,0.03)] hover:shadow-md
+              ${protocol.featured 
+                ? "border-[#FF6B4A]/40 ring-1 ring-[#FF6B4A]/20 bg-[#FFFAF8]" 
+                : "border-[#EBE8E3] hover:border-[#FF6B4A]/40"}
             `}
           >
-            <div className="flex flex-col items-center text-center space-y-4">
-              <span className="text-6xl mb-2">{joint.icon}</span>
-              <h3 className="text-2xl font-bold text-white tracking-wide">{joint.label}</h3>
-              <p className="text-gray-400 text-sm">{joint.desc}</p>
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-4xl">{protocol.icon}</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#FAF9F6] border border-[#EBE8E3] text-gray-600">
+                  {protocol.category}
+                </span>
+              </div>
               
-              {joint.status === 'coming_soon' && (
-                <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wider bg-gray-800 text-gray-400 py-1 px-2 rounded-full">
-                  Phase 6+
-                </span>
-              )}
-              {joint.status === 'ready' && (
-                <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-400 border border-blue-500/30 py-1 px-2 rounded-full">
-                  Active Model
-                </span>
-              )}
+              <h3 className="text-xl font-bold text-gray-900 mb-2 leading-snug">
+                {protocol.label}
+              </h3>
+              <p className="text-gray-600 text-xs md:text-sm leading-relaxed mb-6">
+                {protocol.desc}
+              </p>
+            </div>
+
+            <div className="pt-4 border-t border-[#EBE8E3] flex items-center justify-between text-xs font-semibold text-[#FF6B4A]">
+              <span>Launch Assessment</span>
+              <ChevronRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </div>
           </motion.div>
         ))}
       </div>
-
     </div>
   );
 }

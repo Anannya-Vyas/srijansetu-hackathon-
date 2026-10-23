@@ -524,47 +524,47 @@ function CameraAssessmentInner() {
   // ─── UI ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="p-6 max-w-6xl mx-auto h-full flex flex-col gap-5">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col gap-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className={`text-2xl font-bold tracking-tight flex items-center gap-3 ${config.color}`}>
-            <CameraIcon className="w-7 h-7" /> {config.label} Movement Assessment
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-gray-900 flex items-center gap-3">
+            <CameraIcon className="w-7 h-7 text-[#FF6B4A]" /> {config.label} Movement Assessment
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            MediaPipe AI pose tracking — {steps.length} guided test steps
+          <p className="text-gray-500 text-sm mt-1">
+            MediaPipe AI vision kinematics — {steps.length} guided functional screening steps
           </p>
         </div>
 
         {/* Demo Fallback Quick-Run */}
         <button
           onClick={handleSimulateMovement}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-all"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-[#FAF9F6] border border-[#EBE8E3] text-xs font-semibold text-gray-800 transition-all shadow-sm"
         >
-          <Zap className="w-4 h-4 text-emerald-400" />
-          Test with Simulated Motion (Demo Mode)
+          <Zap className="w-4 h-4 text-[#FF6B4A]" />
+          Run with Simulated Motion (Demo Mode)
         </button>
       </div>
 
       {/* Step progress bar */}
-      <div className="flex gap-2">
+      <div className="flex gap-2.5">
         {steps.map((s, i) => (
-          <div key={s.id} className="flex-1 flex flex-col gap-1">
-            <div className={`h-1.5 rounded-full transition-all ${
+          <div key={s.id} className="flex-1 flex flex-col gap-1.5">
+            <div className={`h-2 rounded-full transition-all ${
               completedSteps.includes(i) ? "bg-emerald-500" :
-              i === currentStepIdx ? "bg-blue-500" : "bg-white/10"}`} />
-            <p className="text-xs text-muted-foreground truncate">{s.title}</p>
+              i === currentStepIdx ? "bg-[#FF6B4A]" : "bg-gray-200"}`} />
+            <p className="text-xs font-semibold text-gray-500 truncate">{s.title}</p>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Camera feed */}
-        <div className="col-span-2 relative bg-black rounded-3xl overflow-hidden border border-white/10 shadow-2xl flex items-center justify-center min-h-[420px]">
+        <div className="col-span-2 relative bg-black rounded-3xl overflow-hidden border border-[#EBE8E3] shadow-xl flex items-center justify-center min-h-[440px]">
           {!isReady && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 z-20 text-white gap-3">
-              <Loader2 className="w-10 h-10 animate-spin text-emerald-400" />
-              <p className="text-sm text-white/70 font-medium">Initializing MediaPipe Vision Model…</p>
+              <Loader2 className="w-10 h-10 animate-spin text-[#FF6B4A]" />
+              <p className="text-sm text-white/80 font-medium">Initializing MediaPipe Vision Model…</p>
             </div>
           )}
 
@@ -578,7 +578,7 @@ function CameraAssessmentInner() {
               </p>
               <button
                 onClick={handleSimulateMovement}
-                className="mt-3 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-2xl shadow-lg transition-all flex items-center gap-2"
+                className="mt-3 px-6 py-3 bg-[#FF6B4A] hover:bg-[#E85938] text-white text-xs font-bold rounded-full shadow-lg transition-all flex items-center gap-2"
               >
                 <Zap className="w-4 h-4" /> Run Assessment with Simulated Motion
               </button>
@@ -618,7 +618,7 @@ function CameraAssessmentInner() {
 
           {/* Recording badge */}
           {phase === "recording" && (
-            <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 animate-pulse z-20">
+            <div className="absolute top-4 left-4 bg-rose-600 text-white px-3.5 py-1 rounded-full text-xs font-bold flex items-center gap-2 animate-pulse z-20 shadow-md">
               <div className="w-2 h-2 rounded-full bg-white" /> REC · {frameCount} frames
             </div>
           )}
@@ -639,44 +639,45 @@ function CameraAssessmentInner() {
           <AnimatePresence mode="wait">
             <motion.div
               key={currentStepIdx}
-              initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
-              className="bg-card border border-border/50 rounded-2xl p-5 flex flex-col gap-4"
+              initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }}
+              className="bg-white border border-[#EBE8E3] rounded-3xl p-6 flex flex-col gap-4 shadow-sm"
             >
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-1">
                   Step {currentStepIdx + 1} of {steps.length}
                 </p>
-                <h2 className={`text-lg font-bold ${config.color}`}>{currentStep.title}</h2>
+                <h2 className="text-xl font-extrabold text-gray-900">{currentStep.title}</h2>
               </div>
 
-              <p className="text-base font-bold text-white bg-blue-500/20 p-4 rounded-xl border border-blue-500/40 leading-relaxed shadow-lg">
+              <div className="p-4 rounded-2xl bg-[#FFF8F6] border border-[#FFD8CC] text-xs font-medium text-gray-800 leading-relaxed shadow-sm">
+                <p className="font-bold text-[#FF6B4A] mb-1">Instruction:</p>
                 {currentStep.instruction}
-              </p>
+              </div>
 
               {phase === "idle" && (
                 <button
                   onClick={startStep}
                   disabled={!isReady || isProcessing}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full bg-[#FF6B4A] hover:bg-[#E85938] text-white font-semibold py-3.5 rounded-full transition-all shadow-[0_8px_20px_-4px_rgba(255,107,74,0.35)] flex items-center justify-center gap-2 disabled:opacity-50 hover:-translate-y-0.5"
                 >
-                  <Play className="w-4 h-4" /> Start Test
+                  <Play className="w-4 h-4 fill-white" /> Start Test
                 </button>
               )}
               {phase === "countdown" && (
-                <button disabled className="w-full bg-orange-500 text-white font-bold py-3 rounded-xl">
+                <button disabled className="w-full bg-amber-500 text-white font-bold py-3.5 rounded-full">
                   Starting in {countdown}…
                 </button>
               )}
               {phase === "recording" && (
-                <button disabled className="w-full bg-red-600 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 opacity-80 cursor-not-allowed">
-                  <Loader2 className="w-4 h-4 animate-spin" /> Recording…
+                <button disabled className="w-full bg-rose-600 text-white font-bold py-3.5 rounded-full flex items-center justify-center gap-2 opacity-80 cursor-not-allowed">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Recording Kinematics…
                 </button>
               )}
               {phase === "done" && (
                 <button
                   onClick={nextStep}
                   disabled={isProcessing}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2"
+                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3.5 rounded-full transition-all shadow-md flex items-center justify-center gap-2"
                 >
                   {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <ChevronRight className="w-4 h-4" />}
                   {isLastStep ? (isProcessing ? "Analysing…" : "Submit All Results") : "Next Step →"}
@@ -686,50 +687,50 @@ function CameraAssessmentInner() {
           </AnimatePresence>
 
           {/* Status */}
-          <div className="bg-card border border-border/50 rounded-2xl p-4 text-sm">
-            <p className="font-semibold mb-3 text-muted-foreground uppercase tracking-wider text-xs">Live Status</p>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">AI Model</span>
-                <span className={isReady ? "text-emerald-400 font-medium" : "text-orange-400"}>
+          <div className="bg-white border border-[#EBE8E3] rounded-3xl p-5 text-sm shadow-sm">
+            <p className="font-bold mb-3 text-gray-500 uppercase tracking-wider text-xs">Live Telemetry</p>
+            <div className="space-y-2.5">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500">AI Pose Model</span>
+                <span className={isReady ? "text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200" : "text-amber-700 font-medium"}>
                   {isReady ? "Ready" : "Loading…"}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Webcam Stream</span>
-                <span className={cameraActive ? "text-emerald-400 font-medium" : "text-amber-400 font-medium"}>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500">Webcam Stream</span>
+                <span className={cameraActive ? "text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200" : "text-amber-600 font-medium"}>
                   {cameraActive ? "Active" : "Connecting…"}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Joint</span>
-                <span className={`font-medium ${config.color}`}>{config.label}</span>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500">Target Protocol</span>
+                <span className="font-bold text-gray-900">{config.label}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Current Step</span>
-                <span className="text-white font-mono text-xs">{currentStep.id}</span>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500">Active Channel</span>
+                <span className="text-gray-900 font-mono text-[11px] font-semibold">{currentStep.id}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Frames</span>
-                <span className="font-mono text-white">{frameCount}</span>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500">Sampled Frames</span>
+                <span className="font-bold text-gray-900">{frameCount}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Steps Done</span>
-                <span className="text-emerald-400 font-medium">{completedSteps.length} / {steps.length}</span>
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500">Steps Completed</span>
+                <span className="text-emerald-700 font-bold">{completedSteps.length} / {steps.length}</span>
               </div>
             </div>
           </div>
 
           {error && (
-            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+            <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
               <div>
-                <p className="text-destructive text-sm font-medium">{error}</p>
+                <p className="text-rose-700 text-xs font-medium">{error}</p>
                 <div className="flex items-center gap-3 mt-2">
-                  <button onClick={() => { setPhase("idle"); setError(null); }} className="text-xs text-white/80 underline">
+                  <button onClick={() => { setPhase("idle"); setError(null); }} className="text-xs text-rose-800 underline font-semibold">
                     Try again
                   </button>
-                  <button onClick={handleSimulateMovement} className="text-xs text-emerald-400 font-bold underline">
+                  <button onClick={handleSimulateMovement} className="text-xs text-[#FF6B4A] font-bold underline">
                     Use simulated demo motion
                   </button>
                 </div>

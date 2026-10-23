@@ -1,18 +1,22 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
-  Activity, AlertCircle, CheckCircle2, ArrowRight, Loader2,
-  WifiOff, Info, Cpu
-} from "lucide-react";
+  ActivityLogIcon, 
+  ExclamationTriangleIcon, 
+  CheckCircledIcon, 
+  ArrowRightIcon, 
+  ReloadIcon,
+  InfoCircledIcon, 
+  MixerHorizontalIcon
+} from "@radix-ui/react-icons";
 import { useScreening } from "@/context/ScreeningContext";
 import type { IMUResult } from "@/context/ScreeningContext";
 
 const IMU_SERVICE_URL = "http://localhost:8001";
 
-// Map selectedJoint to a profile — knee uses moderate_oa for demo relevance
 const jointToProfile = (joint: string | null): string => {
   if (joint === "knee") return "moderate_oa";
   if (joint === "hip") return "moderate_oa";
@@ -27,13 +31,12 @@ export default function IMUPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [result, setResult] = useState<IMUResult | null>(imuResult);
 
-  // If we already have a result from this session, show it immediately
   useEffect(() => {
     if (imuResult) {
       setResult(imuResult);
       setStatus("done");
     }
-  }, []);
+  }, [imuResult]);
 
   const runAssessment = async () => {
     setStatus("running");
@@ -41,7 +44,6 @@ export default function IMUPage() {
     setResult(null);
 
     try {
-      // Step 1: simulate
       const profile = jointToProfile(selectedJoint);
       const simRes = await fetch(`${IMU_SERVICE_URL}/api/imu/simulate`, {
         method: "POST",
@@ -64,7 +66,6 @@ export default function IMUPage() {
       const simData = await simRes.json();
       const sessionId: string = simData.session_id;
 
-      // Step 2: assess
       const assessRes = await fetch(`${IMU_SERVICE_URL}/api/imu/assess`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -91,7 +92,7 @@ export default function IMUPage() {
         msg.includes("net::ERR")
       ) {
         setStatus("unavailable");
-        setErrorMsg("IMU service is not reachable at port 8001. The assessment is marked unavailable. You can continue without it.");
+        setErrorMsg("IMU sensor service is currently offline. You can proceed directly to results.");
       } else {
         setStatus("error");
         setErrorMsg(msg);
@@ -100,29 +101,26 @@ export default function IMUPage() {
   };
 
   const riskColor = (level: string) => {
-    if (level === "elevated") return "text-red-400";
-    if (level === "moderate") return "text-orange-400";
-    return "text-emerald-400";
+    if (level === "elevated") return "text-rose-600";
+    if (level === "moderate") return "text-amber-600";
+    return "text-emerald-600";
   };
 
   const riskBg = (level: string) => {
-    if (level === "elevated") return "bg-red-500/20 border-red-500/30";
-    if (level === "moderate") return "bg-orange-500/20 border-orange-500/30";
-    return "bg-emerald-500/20 border-emerald-500/30";
+    if (level === "elevated") return "bg-rose-50 border-rose-200";
+    if (level === "moderate") return "bg-amber-50 border-amber-200";
+    return "bg-emerald-50 border-emerald-200";
   };
 
   return (
-    <div className="p-8 max-w-3xl mx-auto h-full flex flex-col">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6">
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center">
-            <Cpu className="w-5 h-5 text-cyan-400" />
-          </div>
-          <h1 className="text-3xl font-semibold tracking-tight text-white">IMU Sensor Assessment</h1>
-        </div>
-        <p className="text-muted-foreground text-base mt-1">
-          Wearable inertial sensor gait analysis — knee movement patterns
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 mb-2">
+          Wearable Inertial Sensor (IMU) Gait Assessment
+        </h1>
+        <p className="text-gray-600 text-sm">
+          Wearable inertial sensor gait analysis — knee and lower extremity movement patterns
         </p>
       </motion.div>
 
@@ -130,105 +128,116 @@ export default function IMUPage() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        className="mb-6 flex items-start gap-3 bg-blue-500/10 border border-blue-500/20 rounded-xl p-4"
+        transition={{ delay: 0.05 }}
+        className="mb-6 flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900"
       >
-        <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-        <p className="text-sm text-white/70">
-          <span className="text-white/90 font-medium">Demo mode: </span>
-          This assessment uses the validated IMU processing pipeline with simulated sensor data.
-          Physical Bluetooth IMU hardware (ESP32 + MPU6050) is not connected in this demo.
-          The signal processing, gait event detection, knee angle estimation, and feature extraction
-          algorithms are identical to what would run with real hardware.
+        <InfoCircledIcon className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+        <p className="leading-relaxed">
+          <strong>Demo note:</strong> This module runs the calibrated sensor signal pipeline. In the absence of live physical Bluetooth hardware, you may run virtual sensor simulation or proceed directly to consolidated results.
         </p>
       </motion.div>
 
       {/* Main card */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="glass-panel p-6 rounded-3xl flex-1 flex flex-col"
+        transition={{ delay: 0.1 }}
+        className="bg-white border border-[#EBE8E3] p-6 sm:p-8 rounded-3xl shadow-[0_15px_45px_-10px_rgba(0,0,0,0.03)]"
       >
         {/* Idle state */}
         {status === "idle" && (
-          <div className="flex flex-col items-center justify-center flex-1 gap-6 py-8">
-            <div className="w-20 h-20 rounded-full bg-cyan-500/10 border-2 border-cyan-500/30 flex items-center justify-center">
-              <Activity className="w-10 h-10 text-cyan-400" />
+          <div className="flex flex-col items-center justify-center py-8 gap-5 text-center">
+            <div className="w-20 h-20 rounded-2xl bg-[#FFEFEA] text-[#FF6B4A] border border-[#FFD8CC] flex items-center justify-center">
+              <ActivityLogIcon className="w-10 h-10" />
             </div>
-            <div className="text-center">
-              <p className="text-white font-medium text-lg mb-1">Virtual IMU — Ready</p>
-              <p className="text-white/50 text-sm">
-                Two virtual sensors (Thigh + Shank) will simulate 10 seconds of walking
-                and extract knee gait features.
+            <div>
+              <p className="text-gray-900 font-bold text-lg mb-1">Virtual IMU Telemetry Ready</p>
+              <p className="text-gray-500 text-xs max-w-sm">
+                Dual virtual sensors (Thigh + Shank) simulate 10 seconds of walking to calculate angular velocity and excursion patterns.
               </p>
             </div>
-            <button
-              onClick={runAssessment}
-              className="flex items-center gap-2 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold px-8 py-3 rounded-full transition-colors"
-            >
-              <Activity className="w-5 h-5" /> Start IMU Assessment
-            </button>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <button
+                onClick={runAssessment}
+                className="flex items-center gap-2 bg-[#FF6B4A] hover:bg-[#E85938] text-white font-semibold px-8 py-3.5 rounded-full shadow-md transition-all text-xs"
+              >
+                <ActivityLogIcon className="w-4 h-4" /> Start IMU Assessment
+              </button>
+              <button
+                onClick={() => router.push("/screening/results")}
+                className="px-6 py-3.5 rounded-full bg-white border border-[#EBE8E3] text-gray-700 hover:bg-[#FAF9F6] font-semibold text-xs transition-all"
+              >
+                Skip to Results
+              </button>
+            </div>
           </div>
         )}
 
         {/* Running */}
         {status === "running" && (
-          <div className="flex flex-col items-center justify-center flex-1 gap-4 py-8">
-            <Loader2 className="w-12 h-12 text-cyan-400 animate-spin" />
-            <p className="text-white font-medium text-lg">Running gait simulation pipeline...</p>
-            <p className="text-white/50 text-sm text-center max-w-sm">
-              Generating synthetic IMU data → Butterworth filtering → Quaternion orientation →
-              Knee angle estimation → Gait event detection → Feature extraction
+          <div className="flex flex-col items-center justify-center py-8 gap-4 text-center">
+            <ReloadIcon className="w-10 h-10 text-[#FF6B4A] animate-spin" />
+            <p className="text-gray-900 font-bold text-lg">Processing Sensor Telemetry...</p>
+            <p className="text-gray-500 text-xs max-w-sm">
+              Applying Butterworth filtering, quaternion angle transformation, and stance phase cadence detection.
             </p>
           </div>
         )}
 
         {/* Service unavailable */}
         {status === "unavailable" && (
-          <div className="flex flex-col items-center justify-center flex-1 gap-4 py-8">
-            <WifiOff className="w-12 h-12 text-yellow-400" />
-            <p className="text-white font-semibold text-lg">IMU Service Unavailable</p>
-            <p className="text-white/60 text-sm text-center max-w-md">{errorMsg}</p>
-            <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 text-sm text-yellow-300 text-center max-w-sm">
-              You can continue the screening. The IMU assessment will appear as unavailable in the results.
-            </div>
+          <div className="flex flex-col items-center justify-center py-8 gap-4 text-center">
+            <InfoCircledIcon className="w-10 h-10 text-amber-500" />
+            <p className="text-gray-900 font-bold text-lg">IMU Service Not Active</p>
+            <p className="text-gray-500 text-xs max-w-sm">{errorMsg}</p>
+            <button
+              onClick={() => router.push("/screening/results")}
+              className="mt-2 flex items-center gap-2 bg-[#FF6B4A] hover:bg-[#E85938] text-white font-semibold px-8 py-3.5 rounded-full shadow-md text-xs transition-all"
+            >
+              Continue to Screening Results <ArrowRightIcon className="w-4 h-4" />
+            </button>
           </div>
         )}
 
         {/* Error */}
         {status === "error" && (
-          <div className="flex flex-col items-center justify-center flex-1 gap-4 py-8">
-            <AlertCircle className="w-12 h-12 text-red-400" />
-            <p className="text-white font-semibold text-lg">Assessment Failed</p>
-            <p className="text-red-400 text-sm text-center max-w-md">{errorMsg}</p>
-            <button
-              onClick={runAssessment}
-              className="bg-white/10 hover:bg-white/20 text-white px-6 py-2 rounded-full text-sm transition-colors"
-            >
-              Retry
-            </button>
+          <div className="flex flex-col items-center justify-center py-8 gap-4 text-center">
+            <ExclamationTriangleIcon className="w-10 h-10 text-rose-500" />
+            <p className="text-gray-900 font-bold text-lg">Assessment Interrupted</p>
+            <p className="text-rose-600 text-xs max-w-sm">{errorMsg}</p>
+            <div className="flex gap-3">
+              <button
+                onClick={runAssessment}
+                className="bg-[#FAF9F6] border border-[#EBE8E3] hover:bg-gray-100 text-gray-800 px-6 py-2.5 rounded-full text-xs font-semibold"
+              >
+                Retry
+              </button>
+              <button
+                onClick={() => router.push("/screening/results")}
+                className="bg-[#FF6B4A] hover:bg-[#E85938] text-white px-6 py-2.5 rounded-full text-xs font-semibold shadow-sm"
+              >
+                Skip
+              </button>
+            </div>
           </div>
         )}
 
-        {/* Done — show results */}
+        {/* Done */}
         {status === "done" && result && (
-          <div className="flex flex-col gap-5">
-            {/* Risk badge */}
-            <div className={`flex items-center gap-4 p-4 rounded-2xl border ${riskBg(result.risk_level)}`}>
-              <CheckCircle2 className="w-8 h-8 text-emerald-400 shrink-0" />
+          <div className="flex flex-col gap-6">
+            <div className={`flex items-center gap-4 p-5 rounded-2xl border ${riskBg(result.risk_level)}`}>
+              <CheckCircledIcon className="w-8 h-8 text-emerald-600 shrink-0" />
               <div>
-                <p className="text-xs text-white/50 uppercase tracking-wider mb-0.5">Movement Risk Level</p>
-                <p className={`text-2xl font-bold capitalize ${riskColor(result.risk_level)}`}>
-                  {result.risk_level}
+                <p className="text-xs text-gray-500 uppercase font-semibold">Sensor Kinematic Triage</p>
+                <p className={`text-2xl font-black capitalize ${riskColor(result.risk_level)}`}>
+                  {result.risk_level} Risk
                 </p>
-                <p className="text-xs text-white/40">
-                  Score: {(result.risk_score * 100).toFixed(0)}/100 · Profile: {result.simulation_profile}
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Index: {(result.risk_score * 100).toFixed(0)}/100 • Profile: {result.simulation_profile}
                 </p>
               </div>
             </div>
 
-            {/* Gait metrics grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {[
                 { label: "Cadence", value: result.features.cadence_spm, unit: "spm", decimals: 1 },
@@ -238,9 +247,9 @@ export default function IMUPage() {
                 { label: "Swing", value: result.features.swing_percentage, unit: "%", decimals: 1 },
                 { label: "Gait Cycles", value: result.features.cycle_count, unit: "", decimals: 0 },
               ].map(({ label, value, unit, decimals }) => (
-                <div key={label} className="bg-white/5 rounded-xl p-3 text-center">
-                  <p className="text-xs text-white/40 mb-1">{label}</p>
-                  <p className="text-xl font-bold text-white">
+                <div key={label} className="bg-[#FAF9F6] border border-[#EBE8E3] rounded-2xl p-4 text-center">
+                  <p className="text-xs text-gray-500 font-semibold mb-1">{label}</p>
+                  <p className="text-xl font-black text-gray-900">
                     {value !== null && value !== undefined
                       ? `${decimals === 0 ? value : Number(value).toFixed(decimals)}${unit}`
                       : "N/A"}
@@ -249,42 +258,17 @@ export default function IMUPage() {
               ))}
             </div>
 
-            {/* Evidence */}
-            {result.evidence && result.evidence.length > 0 && (
-              <div className="bg-white/5 rounded-xl p-4">
-                <p className="text-xs font-bold text-white/50 uppercase tracking-wider mb-3">Gait Evidence</p>
-                <div className="space-y-2">
-                  {result.evidence.map((item, i) => (
-                    <div key={i} className="flex items-start gap-2 text-sm text-white/70">
-                      <span className="text-cyan-400 mt-0.5 shrink-0">•</span>
-                      <span>{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Disclaimer */}
-            <p className="text-xs text-white/30 text-center px-2">{result.disclaimer}</p>
+            <div className="flex justify-end pt-4 border-t border-[#EBE8E3]">
+              <button
+                onClick={() => router.push("/screening/results")}
+                className="flex items-center gap-2 bg-[#FF6B4A] hover:bg-[#E85938] text-white font-semibold px-8 py-3.5 rounded-full shadow-md text-xs transition-all"
+              >
+                View Full Diagnostic Results <ArrowRightIcon className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
       </motion.div>
-
-      {/* Continue button — always visible after idle */}
-      {(status === "done" || status === "unavailable" || status === "error") && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="mt-6 flex justify-end"
-        >
-          <button
-            onClick={() => router.push("/screening/results")}
-            className="flex items-center gap-2 bg-white text-black font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition-colors"
-          >
-            Continue <ArrowRight className="w-5 h-5" />
-          </button>
-        </motion.div>
-      )}
     </div>
   );
 }

@@ -2,7 +2,17 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, Image as ImageIcon, X, Loader2, AlertTriangle, ShieldCheck, Sparkles } from "lucide-react";
+import Link from "next/link";
+import { 
+  UploadIcon, 
+  Cross2Icon, 
+  CheckCircledIcon, 
+  ExclamationTriangleIcon, 
+  ReloadIcon,
+  ArrowLeftIcon,
+  ImageIcon,
+  MagicWandIcon
+} from "@radix-ui/react-icons";
 import { useScreening } from "@/context/ScreeningContext";
 import { usePatient } from "@/context/PatientContext";
 
@@ -83,89 +93,105 @@ export default function OsteoporosisXRayPage() {
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto h-full flex flex-col">
-      <div className="mb-6 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3">
-          <Sparkles className="w-3.5 h-3.5" /> DenseNet-121 Clean • CLAHE Trabecular Analysis • XAI Grad-CAM
-        </div>
-        <h1 className="text-3xl font-bold tracking-tight text-white flex items-center justify-center gap-3">
-          <ImageIcon className="w-8 h-8 text-emerald-500" />
+    <div className="max-w-4xl mx-auto px-4 sm:px-6">
+      {/* Breadcrumb / Top Bar */}
+      <div className="flex items-center justify-between mb-8">
+        <Link 
+          href="/screening/joint-selection" 
+          className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium"
+        >
+          <ArrowLeftIcon className="w-4 h-4" /> Back to Protocol Selection
+        </Link>
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#FFEFEA] text-[#E65100] border border-[#FFD8CC]">
+          <MagicWandIcon className="w-3.5 h-3.5" /> DenseNet-121 • CLAHE • Grad-CAM
+        </span>
+      </div>
+
+      {/* Header */}
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 mb-2">
           Upload Osteoporosis Radiograph
         </h1>
-        <p className="text-gray-400 text-sm mt-1 max-w-lg mx-auto">
-          Upload a knee, femoral, or distal radiograph. The system enhances bone microarchitecture with CLAHE and visualizes density loss using Grad-CAM attention heatmaps.
+        <p className="text-gray-600 text-sm md:text-base max-w-xl mx-auto">
+          Upload a knee, femoral neck, or distal radiograph. The system enhances trabecular microarchitecture with adaptive CLAHE and calculates bone density loss heatmaps.
         </p>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center">
+      {/* Main Upload / Preview Area */}
+      <div className="flex flex-col items-center justify-center">
         {!preview ? (
           <div 
-            className="w-full max-w-2xl border-2 border-dashed border-white/20 rounded-3xl p-12 flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition-all hover:border-emerald-500/40 group"
+            className="w-full max-w-2xl bg-white border-2 border-dashed border-[#EBE8E3] hover:border-[#FF6B4A]/60 hover:bg-[#FFFBF9] rounded-3xl p-12 flex flex-col items-center justify-center cursor-pointer transition-all shadow-[0_15px_45px_-10px_rgba(0,0,0,0.03)] group"
             onClick={() => fileInputRef.current?.click()}
           >
-            <div className="w-20 h-20 rounded-2xl bg-white/5 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform">
-              <Upload className="w-10 h-10 text-emerald-400" />
+            <div className="w-20 h-20 rounded-2xl bg-[#FFEFEA] flex items-center justify-center mb-5 group-hover:scale-105 transition-transform shadow-inner">
+              <UploadIcon className="w-10 h-10 text-[#FF6B4A]" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-1">Select Radiograph File</h3>
-            <p className="text-gray-400 text-sm text-center max-w-xs mb-3">
+            <h3 className="text-xl font-bold text-gray-900 mb-1">Select Radiograph File</h3>
+            <p className="text-gray-500 text-sm text-center max-w-xs mb-4">
               Standard digital X-Ray format (JPEG, PNG, DICOM-exported)
             </p>
-            <span className="text-xs text-white/40 border border-white/10 px-3 py-1 rounded-full">
+            <div className="inline-flex items-center gap-2 text-xs font-semibold text-gray-500 bg-[#FAF9F6] border border-[#EBE8E3] px-3.5 py-1.5 rounded-full">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               Automated Quality Gatekeeper Active
-            </span>
+            </div>
             <input type="file" className="hidden" ref={fileInputRef} accept="image/*" onChange={handleFileChange} />
           </div>
         ) : (
-          <div className="w-full max-w-2xl relative rounded-3xl overflow-hidden border border-white/20 bg-black/60 shadow-2xl">
-            <img src={preview} alt="Radiograph Preview" className="w-full object-contain max-h-[380px] p-2" />
+          <div className="w-full max-w-2xl relative rounded-3xl overflow-hidden border border-[#EBE8E3] bg-white shadow-xl p-3">
+            <div className="relative rounded-2xl overflow-hidden bg-gray-900/5 flex items-center justify-center">
+              <img src={preview} alt="Radiograph Preview" className="w-full object-contain max-h-[420px] rounded-2xl" />
+            </div>
             <button 
               onClick={() => { setFile(null); setPreview(null); setGatekeeperRejection(null); }}
-              className="absolute top-4 right-4 bg-black/70 hover:bg-black p-2 rounded-full text-white/70 hover:text-white transition-all border border-white/10"
+              className="absolute top-6 right-6 bg-white/90 hover:bg-white p-2.5 rounded-full text-gray-700 hover:text-gray-900 transition-all shadow-md border border-[#EBE8E3]"
+              title="Remove image"
             >
-              <X className="w-4 h-4" />
+              <Cross2Icon className="w-4 h-4" />
             </button>
           </div>
         )}
 
         {/* Quality Gatekeeper Refusal Card */}
         {gatekeeperRejection && (
-          <div className="w-full max-w-2xl mt-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3 text-amber-300 animate-fadeIn">
-            <AlertTriangle className="w-6 h-6 flex-shrink-0 text-amber-400 mt-0.5" />
+          <div className="w-full max-w-2xl mt-6 p-5 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-3.5 text-amber-900 shadow-sm animate-fadeIn">
+            <ExclamationTriangleIcon className="w-6 h-6 flex-shrink-0 text-amber-600 mt-0.5" />
             <div className="text-sm">
-              <p className="font-bold text-amber-200">Image Quality Gatekeeper Rejection</p>
-              <p className="mt-0.5 text-amber-300/90">{gatekeeperRejection}</p>
-              <p className="mt-2 text-xs text-gray-400">
-                To guarantee diagnostic safety and eliminate hallucinated findings, our safety layer rejects motion-blurred or low-contrast inputs.
+              <p className="font-bold text-amber-900">Image Quality Gatekeeper Rejection</p>
+              <p className="mt-1 text-amber-800 leading-relaxed">{gatekeeperRejection}</p>
+              <p className="mt-2 text-xs text-amber-700/80">
+                To guarantee diagnostic safety and eliminate hallucinated findings, our safety layer rejects motion-blurred, rotated, or low-contrast inputs.
               </p>
             </div>
           </div>
         )}
 
         {error && (
-          <div className="w-full max-w-2xl mt-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+          <div className="w-full max-w-2xl mt-4 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-sm font-medium">
             {error}
           </div>
         )}
       </div>
 
-      <div className="mt-6 flex items-center justify-between w-full max-w-2xl mx-auto">
-        <div className="flex items-center gap-2 text-xs text-gray-400">
-          <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>Patient-level grouped validation (No image leakage)</span>
+      {/* Action Footer */}
+      <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 w-full max-w-2xl mx-auto pt-4 border-t border-[#EBE8E3]">
+        <div className="flex items-center gap-2 text-xs text-gray-500">
+          <CheckCircledIcon className="w-4 h-4 text-emerald-600" />
+          <span>Patient-level grouped validation (Zero image leakage)</span>
         </div>
 
         <button
           onClick={handleSubmit}
           disabled={!file || isUploading}
-          className={`flex items-center gap-2 px-8 py-3 rounded-2xl font-bold transition-all shadow-lg ${
+          className={`flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold transition-all shadow-md ${
             file && !isUploading 
-              ? "bg-emerald-600 hover:bg-emerald-500 text-white hover:scale-105 shadow-emerald-900/30" 
-              : "bg-white/10 text-white/30 cursor-not-allowed"
+              ? "bg-[#FF6B4A] hover:bg-[#E85938] text-white shadow-[0_8px_20px_-4px_rgba(255,107,74,0.35)] hover:-translate-y-0.5" 
+              : "bg-gray-100 text-gray-400 cursor-not-allowed border border-[#EBE8E3]"
           }`}
         >
           {isUploading ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <ReloadIcon className="w-4 h-4 animate-spin" />
               <span>Analyzing Trabecular Matrix...</span>
             </>
           ) : (

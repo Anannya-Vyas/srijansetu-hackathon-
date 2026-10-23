@@ -3,12 +3,13 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ScreeningProvider } from "@/context/ScreeningContext";
 import { PatientProvider } from "@/context/PatientContext";
+import Navbar from "@/components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Swastik | Unified Healthcare",
-  description: "Rural healthcare ecosystem.",
+  title: "Swastik | Unified Healthcare Intelligence",
+  description: "Rural healthcare musculoskeletal clinical decision platform.",
 };
 
 export default function RootLayout({
@@ -17,11 +18,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} bg-background text-foreground min-h-screen flex flex-col`}>
+    <html lang="en">
+      <body className={`${inter.className} bg-[#FDFBF7] text-[#18181B] selection:bg-[#FF6B4A]/20 selection:text-[#EA580C] min-h-screen flex flex-col antialiased`}>
         <ScreeningProvider>
           <PatientProvider>
-            {children}
+            <Navbar />
+            <div className="flex-1">
+              {children}
+            </div>
           </PatientProvider>
         </ScreeningProvider>
       </body>

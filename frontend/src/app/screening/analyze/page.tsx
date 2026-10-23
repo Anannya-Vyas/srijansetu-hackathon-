@@ -1,19 +1,23 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { CheckCircle2, Circle, Loader2, Activity } from "lucide-react";
-import { api } from "@/services/api";
+import { 
+  CheckCircledIcon, 
+  ReloadIcon, 
+  ActivityLogIcon,
+  ExclamationTriangleIcon 
+} from "@radix-ui/react-icons";
 import { useScreening } from "@/context/ScreeningContext";
 
 const STAGES = [
-  "Video uploaded",
-  "Pose detected",
-  "Skeleton extracted",
-  "Gait features calculated",
-  "AI screening in progress",
-  "Assessment ready"
+  "Kinematic Landmark Extraction",
+  "Pose Frame Alignment & Quality Check",
+  "Spatial Joint Trajectory Calculation",
+  "Frontal/Sagittal Excursion Estimation",
+  "Multi-Stream AI Inference",
+  "Screening Classification Ready"
 ];
 
 export default function AnalyzePage() {
@@ -31,18 +35,14 @@ export default function AnalyzePage() {
           throw new Error("No camera data found. Please run the Camera Assessment first.");
         }
 
-        // Mock the UI progression quickly
+        // Progression animation
         for (let i = 0; i < STAGES.length - 1; i++) {
           if (!isMounted) return;
           setCurrentStageIndex(i);
-          await new Promise(r => setTimeout(r, 600)); // 600ms per fake step
+          await new Promise(r => setTimeout(r, 500));
         }
         
-        // Wait for actual API response at the AI step
         if (!isMounted) return;
-        // Send payload directly - tempCameraAngles already has the correct shape:
-        // { left_knee_angles, right_knee_angles } for knee
-        // { joint_angles: {...} } for everything else
         const cameraRes = await fetch(`http://localhost:8000/api/analyze/camera/${selectedJoint || "knee"}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -68,7 +68,6 @@ export default function AnalyzePage() {
         
         setCameraResult({
           status: "success",
-          // Handle both old-style (knee/hip) and new-style (hand/shoulder/spine) response fields
           probability: data.probability ?? data.camera_risk ?? 0.5,
           threshold: data.threshold ?? 0.5,
           result: data.result ?? data.camera_class ?? "Assessment complete",
@@ -79,8 +78,8 @@ export default function AnalyzePage() {
         });
         
         setTimeout(() => {
-          if (isMounted) router.push("/screening/imu");
-        }, 1000);
+          if (isMounted) router.push("/screening/results");
+        }, 900);
 
       } catch (err: any) {
         if (isMounted) {
@@ -94,22 +93,21 @@ export default function AnalyzePage() {
     return () => {
       isMounted = false;
     };
-  }, [tempCameraAngles, setCameraResult, router]);
+  }, [tempCameraAngles, setCameraResult, router, selectedJoint]);
 
   return (
-    <div className="p-8 max-w-2xl mx-auto h-full flex flex-col items-center justify-center">
-      
-      <div className="text-center mb-12">
-        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent/20 mb-6 relative">
-          <Activity className="w-10 h-10 text-accent relative z-10" />
-          <div className="absolute inset-0 rounded-full border-4 border-accent border-t-transparent animate-spin" />
+    <div className="max-w-2xl mx-auto px-4 py-8 flex flex-col items-center justify-center">
+      <div className="text-center mb-8">
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-[#FFEFEA] text-[#FF6B4A] border border-[#FFD8CC] mb-5 shadow-sm relative">
+          <ActivityLogIcon className="w-10 h-10" />
+          <div className="absolute inset-0 rounded-2xl border-2 border-[#FF6B4A] border-t-transparent animate-spin" />
         </div>
-        <h1 className="text-3xl font-semibold tracking-tight text-white mb-2">Analyzing Movement</h1>
-        <p className="text-muted-foreground">Running Dual-Engine AI assessment on biomechanical data...</p>
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 mb-1">Analyzing Kinematics</h1>
+        <p className="text-gray-500 text-sm">Evaluating functional movement curves through joint ML ensembles...</p>
       </div>
 
-      <div className="w-full glass-panel p-8">
-        <div className="space-y-6">
+      <div className="w-full bg-white border border-[#EBE8E3] p-8 rounded-3xl shadow-[0_15px_45px_-10px_rgba(0,0,0,0.03)]">
+        <div className="space-y-4">
           {STAGES.map((stage, index) => {
             const isActive = index === currentStageIndex;
             const isCompleted = index < currentStageIndex;
@@ -118,21 +116,23 @@ export default function AnalyzePage() {
             return (
               <motion.div 
                 key={stage}
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: isPending ? 0.4 : 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={`flex items-center gap-4 ${isPending ? 'text-muted-foreground' : 'text-white'}`}
+                transition={{ delay: index * 0.05 }}
+                className={`flex items-center gap-3.5 p-3 rounded-2xl transition-colors ${
+                  isActive ? 'bg-[#FFF8F6] border border-[#FFD8CC]' : 'bg-transparent'
+                }`}
               >
                 <div className="w-6 flex justify-center">
                   {isCompleted ? (
-                    <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                    <CheckCircledIcon className="w-5 h-5 text-emerald-600" />
                   ) : isActive ? (
-                    <Loader2 className="w-6 h-6 text-accent animate-spin" />
+                    <ReloadIcon className="w-5 h-5 text-[#FF6B4A] animate-spin" />
                   ) : (
-                    <Circle className="w-5 h-5 text-white/20" />
+                    <div className="w-3.5 h-3.5 rounded-full border border-gray-300" />
                   )}
                 </div>
-                <span className={`text-lg ${isActive ? 'font-medium text-accent animate-pulse' : ''}`}>
+                <span className={`text-sm ${isActive ? 'font-bold text-[#FF6B4A]' : isCompleted ? 'font-semibold text-gray-800' : 'text-gray-400'}`}>
                   {stage}
                 </span>
               </motion.div>
@@ -141,13 +141,12 @@ export default function AnalyzePage() {
         </div>
         
         {error && (
-          <div className="mt-8 p-4 bg-red-500/10 text-red-500 rounded-xl border border-red-500/20 text-center font-medium">
-            {error}
+          <div className="mt-6 p-4 bg-rose-50 text-rose-700 rounded-2xl border border-rose-200 text-center text-xs font-semibold flex items-center justify-center gap-2">
+            <ExclamationTriangleIcon className="w-4 h-4 flex-shrink-0" />
+            <span>{error}</span>
           </div>
         )}
       </div>
-      
     </div>
   );
 }
-

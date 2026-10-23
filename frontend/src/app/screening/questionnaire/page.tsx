@@ -2,8 +2,19 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Activity, Loader2, ChevronRight, User, HeartPulse, Bone, Info, AlertCircle } from "lucide-react";
+import { 
+  ActivityLogIcon, 
+  ReloadIcon, 
+  ChevronRightIcon, 
+  PersonIcon, 
+  HeartFilledIcon, 
+  InfoCircledIcon, 
+  ExclamationTriangleIcon,
+  ArrowLeftIcon,
+  CheckCircledIcon
+} from "@radix-ui/react-icons";
 import { useScreening } from "@/context/ScreeningContext";
 
 const WOMAC_QUESTIONS = [
@@ -93,7 +104,6 @@ export default function QuestionnairePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Phase 6: Clinical Validation
     if (!formData.age || !formData.weight || !formData.height || formData.vas_score === undefined) {
       setError("Required information missing. Please fill all fields.");
       return;
@@ -142,14 +152,11 @@ export default function QuestionnairePage() {
           setMetabolicResult(metabData);
         } catch (metabErr) {
           console.error("Metabolic fetch failed", metabErr);
-          // Continue without metabolic result
           setMetabolicResult(null);
         }
       }
 
-      // Route to Stage 2
       router.push("/screening/joint-selection");
-
     } catch (err: any) {
       setError(err.message || "Failed to process data.");
       setLoading(false);
@@ -157,110 +164,135 @@ export default function QuestionnairePage() {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-4xl mx-auto h-full flex flex-col items-center relative overflow-y-auto">
-      <div className="w-full relative z-10 mb-8 flex flex-col items-center shrink-0 pt-8">
-        <div className="absolute right-0 top-0 mt-4 mr-4"><button type="button" onClick={() => { if(confirm('Clear current session?')) { resetAll(); window.location.reload(); } }} className="text-xs bg-white/5 hover:bg-white/10 text-white/60 px-3 py-1.5 rounded-md border border-white/10 transition-colors flex items-center gap-2">Start New Assessment</button></div><Activity className="w-12 h-12 text-accent mb-4" />
-        <h1 className="text-3xl font-semibold tracking-tight text-white text-center">Stage 1 Assessment</h1>
-        <p className="text-muted-foreground mt-2 text-center max-w-lg">Complete the clinical questionnaire to establish baseline radiographic and metabolic risk factors.</p>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6">
+      {/* Top Bar */}
+      <div className="flex items-center justify-between mb-8">
+        <Link 
+          href="/" 
+          className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium"
+        >
+          <ArrowLeftIcon className="w-4 h-4" /> Back to Home
+        </Link>
+        <button 
+          type="button" 
+          onClick={() => { if(confirm('Clear current session?')) { resetAll(); window.location.reload(); } }} 
+          className="text-xs bg-white hover:bg-[#FAF9F6] text-gray-600 px-3.5 py-1.5 rounded-full border border-[#EBE8E3] transition-colors"
+        >
+          Start New Assessment
+        </button>
+      </div>
+
+      <div className="text-center mb-8">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 mb-2">
+          Osteoarthritis Clinical Intake
+        </h1>
+        <p className="text-gray-600 text-sm md:text-base max-w-lg mx-auto">
+          Complete the clinical questionnaire to establish baseline radiographic and metabolic risk factors.
+        </p>
         
-        <div className="flex gap-2 mt-8 w-64">
-          <div className={`h-1.5 flex-1 rounded-full ${step >= 1 ? 'bg-accent' : 'bg-white/10'} transition-colors duration-300`} />
-          <div className={`h-1.5 flex-1 rounded-full ${step >= 2 ? 'bg-accent' : 'bg-white/10'} transition-colors duration-300`} />
-          <div className={`h-1.5 flex-1 rounded-full ${step >= 3 ? 'bg-accent' : 'bg-white/10'} transition-colors duration-300`} />
+        {/* Step Progress Bar */}
+        <div className="flex gap-2 mt-6 max-w-xs mx-auto">
+          <div className={`h-1.5 flex-1 rounded-full ${step >= 1 ? 'bg-[#FF6B4A]' : 'bg-gray-200'} transition-colors duration-300`} />
+          <div className={`h-1.5 flex-1 rounded-full ${step >= 2 ? 'bg-[#FF6B4A]' : 'bg-gray-200'} transition-colors duration-300`} />
+          <div className={`h-1.5 flex-1 rounded-full ${step >= 3 ? 'bg-[#FF6B4A]' : 'bg-gray-200'} transition-colors duration-300`} />
         </div>
       </div>
 
       <motion.form 
         onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }}
-        className="glass-panel p-6 md:p-10 w-full relative z-10 overflow-visible mb-12"
+        className="bg-white border border-[#EBE8E3] rounded-3xl p-6 sm:p-10 shadow-[0_15px_45px_-10px_rgba(0,0,0,0.03)] mb-12"
       >
         <AnimatePresence mode="wait">
-          
           {step === 1 && (
-            <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
-              <div className="flex items-center gap-3 border-b border-white/10 pb-4 mb-6">
-                <User className="w-5 h-5 text-accent" />
-                <h2 className="text-xl font-medium text-white">Demographics</h2>
+            <motion.div key="step1" initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} className="space-y-6">
+              <div className="flex items-center gap-2 border-b border-[#EBE8E3] pb-4">
+                <PersonIcon className="w-5 h-5 text-[#FF6B4A]" />
+                <h2 className="text-lg font-bold text-gray-900">Patient Demographics</h2>
               </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-400">Age</label>
-                  <input type="number" name="age" value={formData.age} onChange={handleChange} className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:border-accent focus:outline-none transition-colors" required />
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Age (Years)</label>
+                  <input type="number" name="age" value={formData.age} onChange={handleChange} className="w-full bg-[#FAF9F6] border border-[#EBE8E3] rounded-2xl px-4 py-3 text-gray-900 text-sm font-medium focus:border-[#FF6B4A] focus:outline-none focus:ring-2 focus:ring-[#FF6B4A]/20 transition-all" required />
                 </div>
-                <div className="space-y-2 relative group">
-                  <label className="text-sm text-gray-400 flex items-center gap-2">
-                    Sex assigned at birth
-                    <Info className="w-4 h-4 text-gray-500 cursor-help" />
-                  </label>
-                  <select name="gender" value={formData.gender} onChange={handleChange} className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:border-accent focus:outline-none transition-colors" required>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Sex Assigned at Birth</label>
+                  <select name="gender" value={formData.gender} onChange={handleChange} className="w-full bg-[#FAF9F6] border border-[#EBE8E3] rounded-2xl px-4 py-3 text-gray-900 text-sm font-medium focus:border-[#FF6B4A] focus:outline-none focus:ring-2 focus:ring-[#FF6B4A]/20 transition-all" required>
                     <option value={0}>Female</option>
                     <option value={1}>Male</option>
                   </select>
-                  <div className="absolute top-full left-0 mt-2 p-3 bg-black/90 border border-white/10 rounded shadow-xl text-xs text-gray-300 w-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                    Doctor AI models were trained on historical medical datasets. This relies on sex assigned at birth to assess baseline bone density and hormonal risk factors.
-                  </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-400">Height (cm)</label>
-                  <input type="number" name="height" value={formData.height} onChange={handleChange} className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:border-accent focus:outline-none transition-colors" required />
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Height (cm)</label>
+                  <input type="number" name="height" value={formData.height} onChange={handleChange} className="w-full bg-[#FAF9F6] border border-[#EBE8E3] rounded-2xl px-4 py-3 text-gray-900 text-sm font-medium focus:border-[#FF6B4A] focus:outline-none focus:ring-2 focus:ring-[#FF6B4A]/20 transition-all" required />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-400">Weight (kg)</label>
-                  <input type="number" name="weight" value={formData.weight} onChange={handleChange} className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:border-accent focus:outline-none transition-colors" required />
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Weight (kg)</label>
+                  <input type="number" name="weight" value={formData.weight} onChange={handleChange} className="w-full bg-[#FAF9F6] border border-[#EBE8E3] rounded-2xl px-4 py-3 text-gray-900 text-sm font-medium focus:border-[#FF6B4A] focus:outline-none focus:ring-2 focus:ring-[#FF6B4A]/20 transition-all" required />
                 </div>
               </div>
-              <div className="p-4 bg-white/5 rounded-lg border border-white/10 flex justify-between items-center mt-4">
-                <span className="text-sm text-gray-400">Calculated BMI</span>
-                <span className="text-lg font-mono text-accent">{calculatedBMI.toFixed(1)} kg/m²</span>
+
+              <div className="p-4 bg-[#FAF9F6] rounded-2xl border border-[#EBE8E3] flex justify-between items-center mt-4">
+                <span className="text-xs font-semibold text-gray-600 uppercase">Calculated Body Mass Index (BMI)</span>
+                <span className="text-base font-black text-[#FF6B4A]">{calculatedBMI.toFixed(1)} kg/m²</span>
               </div>
             </motion.div>
           )}
 
           {step === 2 && (
-            <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
-              <div className="flex items-center gap-3 border-b border-white/10 pb-4">
-                <Bone className="w-5 h-5 text-accent" />
-                <h2 className="text-xl font-medium text-white">Clinical Symptoms</h2>
+            <motion.div key="step2" initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} className="space-y-8">
+              <div className="flex items-center gap-2 border-b border-[#EBE8E3] pb-4">
+                <ActivityLogIcon className="w-5 h-5 text-[#FF6B4A]" />
+                <h2 className="text-lg font-bold text-gray-900">Clinical Symptoms & Pain Rating</h2>
               </div>
               
-              {/* VAS */}
-              <div className="space-y-4 p-5 bg-white/5 rounded-xl border border-white/10">
+              {/* VAS Slider */}
+              <div className="space-y-3 p-5 bg-[#FAF9F6] rounded-2xl border border-[#EBE8E3]">
                 <div className="flex justify-between items-end">
-                  <label className="text-base text-white font-medium">How much does your knee hurt right now?</label>
-                  <span className="text-xl font-bold text-accent">{formData.vas_score}</span>
+                  <label className="text-sm font-bold text-gray-900">Visual Analog Scale (VAS) Current Joint Pain</label>
+                  <span className="text-xl font-black text-[#FF6B4A]">{formData.vas_score} / 10</span>
                 </div>
-                <input type="range" name="vas_score" min="0" max="10" step="0.5" value={formData.vas_score} onChange={handleChange} className="w-full accent-accent cursor-pointer" />
-                <div className="flex justify-between text-xs text-gray-400">
+                <input type="range" name="vas_score" min="0" max="10" step="0.5" value={formData.vas_score} onChange={handleChange} className="w-full accent-[#FF6B4A] cursor-pointer h-2 bg-gray-200 rounded-lg" />
+                <div className="flex justify-between text-xs text-gray-500 font-medium">
                   <span>0 = No pain</span>
-                  <span>10 = Worst possible pain</span>
+                  <span>10 = Worst imaginable pain</span>
                 </div>
               </div>
 
-              {/* WOMAC */}
+              {/* WOMAC Assessment */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <label className="text-base text-white font-medium">WOMAC Assessment</label>
-                  <span className="text-xs font-mono bg-accent/20 text-accent px-3 py-1 rounded-full border border-accent/30">Total: {totalWomac}/96</span>
+                  <div>
+                    <h3 className="text-base font-bold text-gray-900">WOMAC Functional Assessment</h3>
+                    <p className="text-xs text-gray-500 mt-0.5">Rate pain, stiffness, and difficulty (0 = None, 4 = Extreme)</p>
+                  </div>
+                  <span className="text-xs font-bold bg-[#FFEFEA] text-[#E65100] px-3.5 py-1.5 rounded-full border border-[#FFD8CC]">
+                    Total: {totalWomac} / 96
+                  </span>
                 </div>
-                <p className="text-sm text-gray-400 mb-4">Please rate your pain, stiffness, and difficulty with the following activities in the last 48 hours. (0 = None, 4 = Extreme)</p>
                 
-                <div className="max-h-[400px] overflow-y-auto pr-2 space-y-6 custom-scrollbar">
+                <div className="max-h-[360px] overflow-y-auto pr-2 space-y-6">
                   {["Pain", "Stiffness", "Physical Function"].map(category => (
                     <div key={category} className="space-y-3">
-                      <h3 className="text-sm uppercase tracking-widest text-accent font-semibold sticky top-0 bg-[#161616]/90 backdrop-blur py-2 z-10 border-b border-white/5">{category}</h3>
+                      <h4 className="text-xs uppercase tracking-wider text-gray-500 font-bold sticky top-0 bg-white/95 backdrop-blur py-1 z-10 border-b border-[#EBE8E3]">
+                        {category}
+                      </h4>
                       {WOMAC_QUESTIONS.filter(q => q.category === category).map(q => (
-                        <div key={q.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-white/5 rounded-lg border border-white/5 hover:border-white/20 transition-colors">
-                          <span className="text-sm text-gray-300 flex-1">{q.text}</span>
-                          <div className="flex gap-1">
+                        <div key={q.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 bg-[#FAF9F6] rounded-2xl border border-[#EBE8E3]">
+                          <span className="text-xs font-semibold text-gray-800 flex-1">{q.text}</span>
+                          <div className="flex gap-1.5">
                             {[0, 1, 2, 3, 4].map(val => (
                               <button
                                 key={val}
                                 type="button"
                                 onClick={() => handleWomacChange(q.id, val)}
-                                className={`w-8 h-8 rounded text-xs font-medium transition-colors ${
+                                className={`w-8 h-8 rounded-xl text-xs font-bold transition-all ${
                                   womacAnswers[q.id] === val 
-                                    ? 'bg-accent text-white shadow-lg shadow-accent/20' 
-                                    : 'bg-black/50 text-gray-500 hover:bg-white/10'
+                                    ? 'bg-[#FF6B4A] text-white shadow-sm' 
+                                    : 'bg-white text-gray-600 border border-[#EBE8E3] hover:bg-gray-100'
                                 }`}
                               >
                                 {val}
@@ -277,67 +309,75 @@ export default function QuestionnairePage() {
           )}
 
           {step === 3 && (
-            <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
-                <div className="flex items-center gap-3">
-                  <HeartPulse className="w-5 h-5 text-accent" />
-                  <h2 className="text-xl font-medium text-white">Metabolic Profile</h2>
-                </div>
+            <motion.div key="step3" initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -15 }} className="space-y-6">
+              <div className="flex items-center gap-2 border-b border-[#EBE8E3] pb-4">
+                <HeartFilledIcon className="w-5 h-5 text-[#FF6B4A]" />
+                <h2 className="text-lg font-bold text-gray-900">Metabolic & Cardiovascular Profile</h2>
               </div>
 
-              <div className="flex items-center gap-3 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg mb-6">
+              <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-2xl">
                 <input 
                   type="checkbox" 
                   name="unknown_metabolic" 
                   id="unknown_metabolic"
                   checked={formData.unknown_metabolic}
                   onChange={handleChange}
-                  className="w-5 h-5 rounded border-white/20 bg-black/50 accent-yellow-500 cursor-pointer shrink-0"
+                  className="w-4 h-4 rounded border-gray-300 accent-[#FF6B4A] cursor-pointer shrink-0"
                 />
-                <label htmlFor="unknown_metabolic" className="text-sm text-yellow-500/90 cursor-pointer">
-                  I don't know my exact bloodwork numbers. (This will skip the metabolic severity assessment, but you can still proceed with the clinical assessment).
+                <label htmlFor="unknown_metabolic" className="text-xs text-amber-900 font-medium cursor-pointer">
+                  I don't know my exact bloodwork numbers. (This skips metabolic severity while continuing the clinical assessment).
                 </label>
               </div>
 
               <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 transition-opacity duration-300 ${formData.unknown_metabolic ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-400">Treated for Hypertension?</label>
-                  <select name="Hypertension_treatment" value={formData.Hypertension_treatment} onChange={handleChange} className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:border-accent focus:outline-none transition-colors" required={!formData.unknown_metabolic}>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Treated for Hypertension?</label>
+                  <select name="Hypertension_treatment" value={formData.Hypertension_treatment} onChange={handleChange} className="w-full bg-[#FAF9F6] border border-[#EBE8E3] rounded-2xl px-4 py-3 text-gray-900 text-sm font-medium focus:border-[#FF6B4A] focus:outline-none" required={!formData.unknown_metabolic}>
                     <option value={0}>No</option>
                     <option value={1}>Yes</option>
                   </select>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-400">History of Diabetes?</label>
-                  <select name="History_of_Diabetes_Mellitis" value={formData.History_of_Diabetes_Mellitis} onChange={handleChange} className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:border-accent focus:outline-none transition-colors" required={!formData.unknown_metabolic}>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">History of Diabetes Mellitus?</label>
+                  <select name="History_of_Diabetes_Mellitis" value={formData.History_of_Diabetes_Mellitis} onChange={handleChange} className="w-full bg-[#FAF9F6] border border-[#EBE8E3] rounded-2xl px-4 py-3 text-gray-900 text-sm font-medium focus:border-[#FF6B4A] focus:outline-none" required={!formData.unknown_metabolic}>
                     <option value={0}>No</option>
                     <option value={1}>Yes</option>
                   </select>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-400">Current Smoker?</label>
-                  <select name="SMOKER" value={formData.SMOKER} onChange={handleChange} className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:border-accent focus:outline-none transition-colors" required={!formData.unknown_metabolic}>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Current Smoker?</label>
+                  <select name="SMOKER" value={formData.SMOKER} onChange={handleChange} className="w-full bg-[#FAF9F6] border border-[#EBE8E3] rounded-2xl px-4 py-3 text-gray-900 text-sm font-medium focus:border-[#FF6B4A] focus:outline-none" required={!formData.unknown_metabolic}>
                     <option value={0}>No</option>
                     <option value={1}>Yes</option>
                   </select>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm text-gray-400">Total Cholesterol (mg/dL)</label>
-                  <input type="number" name="TC" value={formData.TC} onChange={handleChange} className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:border-accent focus:outline-none transition-colors" required={!formData.unknown_metabolic} />
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Total Cholesterol (mg/dL)</label>
+                  <input type="number" name="TC" value={formData.TC} onChange={handleChange} className="w-full bg-[#FAF9F6] border border-[#EBE8E3] rounded-2xl px-4 py-3 text-gray-900 text-sm font-medium focus:border-[#FF6B4A] focus:outline-none" required={!formData.unknown_metabolic} />
                 </div>
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm text-gray-400">HDL Cholesterol (mg/dL)</label>
-                  <input type="number" name="HDL" value={formData.HDL} onChange={handleChange} className="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:border-accent focus:outline-none transition-colors" required={!formData.unknown_metabolic} />
+                <div className="space-y-1.5 md:col-span-2">
+                  <label className="text-xs font-semibold text-gray-600 uppercase tracking-wider">HDL Cholesterol (mg/dL)</label>
+                  <input type="number" name="HDL" value={formData.HDL} onChange={handleChange} className="w-full bg-[#FAF9F6] border border-[#EBE8E3] rounded-2xl px-4 py-3 text-gray-900 text-sm font-medium focus:border-[#FF6B4A] focus:outline-none" required={!formData.unknown_metabolic} />
                 </div>
               </div>
             </motion.div>
           )}
-
         </AnimatePresence>
 
-        <div className="mt-8 flex justify-between items-center border-t border-white/10 pt-6">
+        {error && (
+          <div className="mt-6 p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-center gap-3 text-rose-700 text-sm font-medium">
+            <ExclamationTriangleIcon className="w-5 h-5 flex-shrink-0" />
+            <p>{error}</p>
+          </div>
+        )}
+
+        <div className="mt-8 flex justify-between items-center border-t border-[#EBE8E3] pt-6">
           {step > 1 ? (
-            <button type="button" onClick={() => setStep(s => s - 1)} className="text-sm text-gray-400 hover:text-white transition-colors px-4 py-2 rounded-full border border-transparent hover:border-white/10">
+            <button 
+              type="button" 
+              onClick={() => setStep(s => s - 1)} 
+              className="text-sm text-gray-600 hover:text-gray-900 font-semibold px-5 py-2.5 rounded-full border border-[#EBE8E3] hover:bg-[#FAF9F6] transition-colors"
+            >
               Back
             </button>
           ) : <div />}
@@ -345,37 +385,13 @@ export default function QuestionnairePage() {
           <button 
             type="submit" 
             disabled={loading}
-            className="flex items-center gap-2 bg-white text-black px-8 py-3 rounded-full font-medium hover:bg-gray-200 transition-all disabled:opacity-50"
+            className="flex items-center gap-2 bg-[#FF6B4A] hover:bg-[#E85938] text-white px-8 py-3.5 rounded-full font-semibold shadow-[0_8px_20px_-4px_rgba(255,107,74,0.35)] transition-all disabled:opacity-50 hover:-translate-y-0.5"
           >
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : step === 3 ? "Process Assessments" : "Continue"}
-            {!loading && <ChevronRight className="w-5 h-5" />}
+            {loading ? <ReloadIcon className="w-4 h-4 animate-spin" /> : step === 3 ? "Process Assessments" : "Continue"}
+            {!loading && <ChevronRightIcon className="w-4 h-4" />}
           </button>
         </div>
-        {error && (
-          <div className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-center gap-2 text-red-400">
-            <AlertCircle className="w-5 h-5" />
-            <p className="text-sm font-medium">{error}</p>
-          </div>
-        )}
       </motion.form>
-      
-      {/* Global styles for custom scrollbar hidden in globals.css, applied locally here */}
-      <style dangerouslySetInnerHTML={{__html: `
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255,255,255,0.02);
-          border-radius: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255,255,255,0.1);
-          border-radius: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255,255,255,0.2);
-        }
-      `}} />
     </div>
   );
 }

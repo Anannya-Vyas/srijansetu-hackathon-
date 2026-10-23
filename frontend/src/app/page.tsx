@@ -189,49 +189,6 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-[#18181B] selection:bg-[#FF6B4A]/20 selection:text-[#EA580C] font-sans relative overflow-x-hidden">
       
-      {/* ─── FLOATING ISLAND NAVBAR (Shape.ai Style) ───────────────────────── */}
-      <header className="sticky top-6 z-40 max-w-5xl mx-auto px-4">
-        <motion.div
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="bg-white/90 backdrop-blur-md border border-[#EBE8E3] rounded-full px-5 py-3 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex items-center justify-between"
-        >
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-5 h-5 rounded-[6px] bg-gradient-to-tr from-[#EA580C] to-[#F97316] rotate-45 transform flex items-center justify-center shadow-sm shadow-orange-500/30" />
-            <span className="font-extrabold text-base tracking-tight text-gray-900">
-              swastik<span className="text-[#FF6B4A]">.ai</span>
-            </span>
-          </Link>
-
-          {/* Center Links */}
-          <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-gray-600">
-            <a href="#hero" className="text-gray-900 hover:text-black transition-colors font-semibold">Home</a>
-            <a href="#integration" className="hover:text-black transition-colors">Features</a>
-            <Link href="/screening/worker-queue" className="hover:text-black transition-colors">ASHA Queue</Link>
-            <Link href="/dashboard" className="hover:text-black transition-colors">DHO Map</Link>
-            <Link href="/model-card" className="hover:text-black transition-colors">Model Card</Link>
-            <Link href="/ethical-ai" className="hover:text-black transition-colors">Ethics</Link>
-          </nav>
-
-          {/* Right Action Buttons */}
-          <div className="flex items-center gap-2">
-            <a 
-              href="#judge-demo"
-              className="px-3.5 py-1.5 text-xs font-semibold text-gray-600 hover:text-black transition-colors"
-            >
-              Judge Demo
-            </a>
-            <button
-              onClick={() => { setSelectedFlow("osteo"); setShowModal(true); }}
-              className="bg-[#18181B] hover:bg-black text-white px-4 py-2 rounded-full text-xs font-bold transition-all shadow-md shadow-black/10 hover:scale-102"
-            >
-              Start Triage
-            </button>
-          </div>
-        </motion.div>
-      </header>
-
       {/* ─── HERO SECTION WITH RADIANT PEACH GLOW & PHONE (Image 1) ──────── */}
       <section id="hero" className="relative pt-12 pb-24 md:pt-16 md:pb-32 px-6 overflow-hidden">
         <div className="max-w-5xl mx-auto text-center relative z-10">
