@@ -67,16 +67,16 @@ export default function OsteoporosisResults() {
   const handleDoctorFeedback = async (agreed: boolean) => {
     setDoctorFeedback(agreed ? "agreed" : "disagreed");
     try {
-      await fetch("http://127.0.0.1:8000/api/feedback/doctor", {
+      await fetch("http://localhost:8000/api/feedback/doctor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          screening_id: patient?.screeningId || "UNKNOWN",
           patient_id: patient?.patientId || "ANONYMOUS",
-          clinical_finding: clinicalLabel,
-          imaging_finding: imagingLabel,
+          screening_type: "osteoporosis",
+          predicted_label: `Clinical: ${clinicalLabel}, Imaging: ${imagingLabel}`,
           doctor_agreed: agreed,
-          notes: agreed ? "Clinician confirmed finding." : "Clinician flagged divergence."
+          doctor_notes: agreed ? "Clinician confirmed finding." : "Clinician flagged divergence.",
+          doctor_name: "Attending Physician"
         })
       });
       setFeedbackSubmitted(true);
