@@ -3,9 +3,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import { 
-  Users, ArrowLeft, Plus, Download, CheckCircle2, AlertTriangle, 
-  MapPin, Phone, Filter, Sparkles, FileText, ArrowRight, ShieldCheck 
-} from "lucide-react";
+  ArrowLeftIcon, 
+  DownloadIcon, 
+  CheckCircledIcon, 
+  ExclamationTriangleIcon, 
+  PersonIcon, 
+  MagicWandIcon, 
+  FileTextIcon, 
+  MixerHorizontalIcon, 
+  LockClosedIcon,
+  LayersIcon,
+} from "@radix-ui/react-icons";
 
 type QueuePatient = {
   id: string;
@@ -135,10 +143,10 @@ export default function WorkerQueuePage() {
           href="/" 
           className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Home
+          <ArrowLeftIcon className="w-4 h-4" /> Back to Home
         </Link>
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <Sparkles className="w-3.5 h-3.5" /> Community Health Worker (ASHA / ANM) Portal
+          <MagicWandIcon className="w-3.5 h-3.5" /> Community Health Worker (ASHA / ANM) Portal
         </div>
       </div>
 
@@ -146,7 +154,7 @@ export default function WorkerQueuePage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
         <div>
           <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2 flex items-center gap-3">
-            <Users className="w-10 h-10 text-emerald-400" />
+            <PersonIcon className="w-9 h-9 text-emerald-400" />
             Rural Screening Camp Queue
           </h1>
           <p className="text-gray-400 max-w-xl text-sm md:text-base">
@@ -159,7 +167,7 @@ export default function WorkerQueuePage() {
             onClick={handleExportRedBatch}
             className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-sm transition-all shadow-lg shadow-rose-950/40 hover:scale-105"
           >
-            <Download className="w-4 h-4" />
+            <DownloadIcon className="w-4 h-4" />
             Export Red Referral Batch ({highRiskCount})
           </button>
         </div>
@@ -196,7 +204,7 @@ export default function WorkerQueuePage() {
       <div className="mb-8 p-6 rounded-3xl bg-gradient-to-r from-blue-950/40 via-purple-950/20 to-black border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-1">
           <h3 className="font-bold text-white text-lg flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-400" /> Rural Health Equity & Economic Impact
+            <LockClosedIcon className="w-5 h-5 text-emerald-400" /> Rural Health Equity & Economic Impact
           </h3>
           <p className="text-gray-300 text-sm max-w-2xl leading-relaxed">
             Conventional DEXA scans cost <strong>₹ 1,500 – ₹ 3,000</strong> plus travel to urban tertiary centres. Swastik runs opportunistic triage on commodity phone cameras inside any browser for <strong>₹ 0 additional hardware cost</strong>, preventing unnecessary out-of-pocket rural expenditure.
@@ -211,7 +219,7 @@ export default function WorkerQueuePage() {
       {/* Filter Tabs */}
       <div className="flex items-center gap-2 mb-6">
         <span className="text-xs text-gray-400 mr-2 flex items-center gap-1 font-semibold">
-          <Filter className="w-3.5 h-3.5" /> Filter:
+          <MixerHorizontalIcon className="w-3.5 h-3.5" /> Filter:
         </span>
         {["All", "High", "Moderate", "Low"].map((tier) => (
           <button
@@ -280,9 +288,9 @@ export default function WorkerQueuePage() {
                   <td className="py-4 px-6 text-right">
                     <Link
                       href="/screening/osteoporosis/results"
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition-all"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition-all"
                     >
-                      <FileText className="w-3.5 h-3.5" /> View Slip
+                      <FileTextIcon className="w-3.5 h-3.5" /> View Slip
                     </Link>
                   </td>
                 </tr>

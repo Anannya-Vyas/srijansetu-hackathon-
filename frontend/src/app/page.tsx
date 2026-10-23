@@ -2,10 +2,20 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { 
-  ArrowRight, Activity, Bone, X, User, Sparkles, Sliders, 
-  Users, FileSpreadsheet, ShieldCheck, Play, CheckCircle2, ChevronRight 
-} from "lucide-react";
+import {
+  PlayIcon,
+  ChevronRightIcon,
+  ArrowRightIcon,
+  Cross2Icon,
+  PersonIcon,
+  MagicWandIcon,
+  MixerHorizontalIcon,
+  FileTextIcon,
+  CheckCircledIcon,
+  ActivityLogIcon,
+  LockClosedIcon,
+  LayersIcon,
+} from "@radix-ui/react-icons";
 import { useState, useEffect } from "react";
 import { usePatient, generateScreeningId } from "@/context/PatientContext";
 import { useRouter } from "next/navigation";
@@ -184,7 +194,7 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-xs font-semibold text-gray-300"
         >
-          <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+          <MagicWandIcon className="w-3.5 h-3.5 text-emerald-400" />
           <span>Swastik Healthcare • Two-Path Joint & Bone Intelligence</span>
         </motion.div>
 
@@ -222,14 +232,14 @@ export default function LandingPage() {
             onClick={() => { setSelectedFlow("oa"); setShowModal(true); }}
             className="flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-bold hover:scale-105 transition-all shadow-lg shadow-blue-900/30"
           >
-            <Activity className="w-5 h-5" /> Start Osteoarthritis Screen
+            <ActivityLogIcon className="w-5 h-5" /> Start Osteoarthritis Screen
           </button>
 
           <button 
             onClick={() => { setSelectedFlow("osteo"); setShowModal(true); }}
             className="flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-2xl font-bold hover:scale-105 transition-all shadow-lg shadow-emerald-900/30"
           >
-            <Bone className="w-5 h-5" /> Start Osteoporosis Screen
+            <LayersIcon className="w-5 h-5" /> Start Osteoporosis Screen
           </button>
         </motion.div>
 
@@ -242,7 +252,7 @@ export default function LandingPage() {
         >
           <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
             <div className="flex items-center gap-2 text-left">
-              <Play className="w-4 h-4 text-emerald-400 fill-emerald-400" />
+              <PlayIcon className="w-4 h-4 text-emerald-400 fill-emerald-400" />
               <span className="text-sm font-bold text-white uppercase tracking-wider">
                 Judge Fast-Track Demo Mode (Preloaded Sample Cohort)
               </span>
@@ -257,7 +267,7 @@ export default function LandingPage() {
             >
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs font-bold text-rose-400 uppercase">Case A • High Risk</span>
-                <ChevronRight className="w-4 h-4 text-rose-400 group-hover:translate-x-1 transition-transform" />
+                <ChevronRightIcon className="w-4 h-4 text-rose-400 group-hover:translate-x-1 transition-transform" />
               </div>
               <p className="font-bold text-white text-sm">Smt. Paramjit Kaur (67F)</p>
               <p className="text-xs text-gray-400 mt-1">Severe trabecular bone loss + knee OA (Immediate DEXA Referral)</p>
@@ -269,7 +279,7 @@ export default function LandingPage() {
             >
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs font-bold text-amber-400 uppercase">Case B • Borderline</span>
-                <ChevronRight className="w-4 h-4 text-amber-400 group-hover:translate-x-1 transition-transform" />
+                <ChevronRightIcon className="w-4 h-4 text-amber-400 group-hover:translate-x-1 transition-transform" />
               </div>
               <p className="font-bold text-white text-sm">Sh. Harpreet Singh (54M)</p>
               <p className="text-xs text-gray-400 mt-1">Early osteopenia & joint stiffness (Vit-D & Physio intervention)</p>
@@ -281,7 +291,7 @@ export default function LandingPage() {
             >
               <div className="flex justify-between items-center mb-1">
                 <span className="text-xs font-bold text-emerald-400 uppercase">Case C • Healthy</span>
-                <ChevronRight className="w-4 h-4 text-emerald-400 group-hover:translate-x-1 transition-transform" />
+                <ChevronRightIcon className="w-4 h-4 text-emerald-400 group-hover:translate-x-1 transition-transform" />
               </div>
               <p className="font-bold text-white text-sm">Smt. Sunita Sharma (38F)</p>
               <p className="text-xs text-gray-400 mt-1">Normal mineral baseline & symmetric gait arc</p>
@@ -296,12 +306,12 @@ export default function LandingPage() {
             className="p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-emerald-500/30 transition-all flex flex-col justify-between group"
           >
             <div>
-              <Users className="w-6 h-6 text-emerald-400 mb-2 group-hover:scale-110 transition-transform" />
+              <PersonIcon className="w-6 h-6 text-emerald-400 mb-2 group-hover:scale-110 transition-transform" />
               <h3 className="font-bold text-white text-base">ASHA Worker Queue</h3>
               <p className="text-xs text-gray-400 mt-1">Rural triage camp queue with color-coded referral batching.</p>
             </div>
             <span className="text-xs text-emerald-400 font-bold mt-4 flex items-center gap-1">
-              View Camp Queue <ArrowRight className="w-3.5 h-3.5" />
+              View Camp Queue <ArrowRightIcon className="w-3.5 h-3.5" />
             </span>
           </Link>
 
@@ -310,12 +320,12 @@ export default function LandingPage() {
             className="p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-emerald-500/30 transition-all flex flex-col justify-between group"
           >
             <div>
-              <Activity className="w-6 h-6 text-emerald-400 mb-2 group-hover:scale-110 transition-transform" />
+              <ActivityLogIcon className="w-6 h-6 text-emerald-400 mb-2 group-hover:scale-110 transition-transform" />
               <h3 className="font-bold text-white text-base">DHO Public Health Heatmap</h3>
               <p className="text-xs text-gray-400 mt-1">District surveillance, camp QR posters & DEXA economics.</p>
             </div>
             <span className="text-xs text-emerald-400 font-bold mt-4 flex items-center gap-1">
-              Open DHO Command <ArrowRight className="w-3.5 h-3.5" />
+              Open DHO Command <ArrowRightIcon className="w-3.5 h-3.5" />
             </span>
           </Link>
 
@@ -324,12 +334,12 @@ export default function LandingPage() {
             className="p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-blue-500/30 transition-all flex flex-col justify-between group"
           >
             <div>
-              <Sliders className="w-6 h-6 text-blue-400 mb-2 group-hover:scale-110 transition-transform" />
+              <MixerHorizontalIcon className="w-6 h-6 text-blue-400 mb-2 group-hover:scale-110 transition-transform" />
               <h3 className="font-bold text-white text-base">What-If Simulator</h3>
               <p className="text-xs text-gray-400 mt-1">Interactive sliders for Calcium, Sun, and Exercise bone age shifts.</p>
             </div>
             <span className="text-xs text-blue-400 font-bold mt-4 flex items-center gap-1">
-              Launch Simulator <ArrowRight className="w-3.5 h-3.5" />
+              Launch Simulator <ArrowRightIcon className="w-3.5 h-3.5" />
             </span>
           </Link>
 
@@ -338,12 +348,12 @@ export default function LandingPage() {
             className="p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-purple-500/30 transition-all flex flex-col justify-between group"
           >
             <div>
-              <FileSpreadsheet className="w-6 h-6 text-purple-400 mb-2 group-hover:scale-110 transition-transform" />
+              <FileTextIcon className="w-6 h-6 text-purple-400 mb-2 group-hover:scale-110 transition-transform" />
               <h3 className="font-bold text-white text-base">Model Card & Metrics</h3>
               <p className="text-xs text-gray-400 mt-1">DenseNet-121 confusion matrix (N=1,147), sensitivity & ablation study.</p>
             </div>
             <span className="text-xs text-purple-400 font-bold mt-4 flex items-center gap-1">
-              Read Benchmark <ArrowRight className="w-3.5 h-3.5" />
+              Read Benchmark <ArrowRightIcon className="w-3.5 h-3.5" />
             </span>
           </Link>
 
@@ -352,12 +362,12 @@ export default function LandingPage() {
             className="p-5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-amber-500/30 transition-all flex flex-col justify-between group"
           >
             <div>
-              <ShieldCheck className="w-6 h-6 text-amber-400 mb-2 group-hover:scale-110 transition-transform" />
+              <LockClosedIcon className="w-6 h-6 text-amber-400 mb-2 group-hover:scale-110 transition-transform" />
               <h3 className="font-bold text-white text-base">Ethical AI & Governance</h3>
               <p className="text-xs text-gray-400 mt-1">Demographic bias parity, DPDP privacy & peer-reviewed preprint.</p>
             </div>
             <span className="text-xs text-amber-400 font-bold mt-4 flex items-center gap-1">
-              Read Governance <ArrowRight className="w-3.5 h-3.5" />
+              Read Governance <ArrowRightIcon className="w-3.5 h-3.5" />
             </span>
           </Link>
         </div>
@@ -372,12 +382,12 @@ export default function LandingPage() {
             className="bg-[#121316] border border-white/10 p-8 rounded-3xl max-w-md w-full relative shadow-2xl"
           >
             <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors">
-              <X className="w-5 h-5" />
+              <Cross2Icon className="w-5 h-5" />
             </button>
             
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-                <User className="w-5 h-5 text-emerald-400" />
+                <PersonIcon className="w-5 h-5 text-emerald-400" />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">Patient Intake</h2>

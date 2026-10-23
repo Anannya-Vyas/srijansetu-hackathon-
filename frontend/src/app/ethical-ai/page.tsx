@@ -2,9 +2,18 @@
 
 import Link from "next/link";
 import { 
-  ArrowLeft, Shield, Lock, Eye, Scale, Users, 
-  CheckCircle2, AlertCircle, FileText, Sparkles, HeartHandshake, GitBranch 
-} from "lucide-react";
+  ArrowLeftIcon, 
+  LockClosedIcon, 
+  EyeOpenIcon, 
+  CheckCircledIcon, 
+  ExclamationTriangleIcon, 
+  FileTextIcon, 
+  MagicWandIcon, 
+  HeartFilledIcon, 
+  ExternalLinkIcon,
+  LayersIcon,
+  ActivityLogIcon
+} from "@radix-ui/react-icons";
 
 export default function EthicalAIPage() {
   return (
@@ -15,7 +24,7 @@ export default function EthicalAIPage() {
           href="/" 
           className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Home
+          <ArrowLeftIcon className="w-4 h-4" /> Back to Home
         </Link>
         <span className="text-xs font-mono text-emerald-400 border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 rounded-full">
           WHO Guidance on AI Ethics in Health Compliant
@@ -25,10 +34,10 @@ export default function EthicalAIPage() {
       {/* Header */}
       <div className="mb-10">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3">
-          <Sparkles className="w-3.5 h-3.5" /> Clinical Safety, Fairness & Governance
+          <MagicWandIcon className="w-3.5 h-3.5" /> Clinical Safety, Fairness & Governance
         </div>
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3 flex items-center gap-3">
-          <Shield className="w-10 h-10 text-emerald-400" />
+          <LockClosedIcon className="w-9 h-9 text-emerald-400" />
           Ethical AI, Privacy & Governance
         </h1>
         <p className="text-gray-400 max-w-3xl text-sm md:text-base leading-relaxed">
@@ -41,7 +50,7 @@ export default function EthicalAIPage() {
         {/* Pillar 1: Demographic Parity */}
         <div className="bg-white/5 border border-white/10 p-6 md:p-8 rounded-3xl backdrop-blur-md">
           <div className="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mb-4">
-            <Scale className="w-6 h-6 text-blue-400" />
+            <ActivityLogIcon className="w-6 h-6 text-blue-400" />
           </div>
           <h2 className="text-xl font-bold text-white mb-2">1. Demographic Bias & Subgroup Fairness</h2>
           <p className="text-sm text-gray-300 leading-relaxed mb-4">
@@ -66,7 +75,7 @@ export default function EthicalAIPage() {
         {/* Pillar 2: Ephemeral Zero-Retention Privacy */}
         <div className="bg-white/5 border border-white/10 p-6 md:p-8 rounded-3xl backdrop-blur-md">
           <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4">
-            <Lock className="w-6 h-6 text-emerald-400" />
+            <LockClosedIcon className="w-6 h-6 text-emerald-400" />
           </div>
           <h2 className="text-xl font-bold text-white mb-2">2. Zero-Retention Ephemeral Privacy</h2>
           <p className="text-sm text-gray-300 leading-relaxed mb-4">
@@ -74,15 +83,15 @@ export default function EthicalAIPage() {
           </p>
           <div className="space-y-2 text-xs text-gray-400">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+              <CheckCircledIcon className="w-4 h-4 text-emerald-400 flex-shrink-0" />
               <span>Client-side MediaPipe landmark extraction (raw video never leaves browser)</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+              <CheckCircledIcon className="w-4 h-4 text-emerald-400 flex-shrink-0" />
               <span>Instant temp-file unlink post-inference in FastAPI backend</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+              <CheckCircledIcon className="w-4 h-4 text-emerald-400 flex-shrink-0" />
               <span>Full compliance with India Digital Personal Data Protection (DPDP) Act 2023</span>
             </div>
           </div>
@@ -91,7 +100,7 @@ export default function EthicalAIPage() {
         {/* Pillar 3: Human-in-the-Loop */}
         <div className="bg-white/5 border border-white/10 p-6 md:p-8 rounded-3xl backdrop-blur-md">
           <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
-            <HeartHandshake className="w-6 h-6 text-purple-400" />
+            <HeartFilledIcon className="w-6 h-6 text-purple-400" />
           </div>
           <h2 className="text-xl font-bold text-white mb-2">3. Human-in-the-Loop Clinical Autonomy</h2>
           <p className="text-sm text-gray-300 leading-relaxed mb-4">
@@ -105,7 +114,7 @@ export default function EthicalAIPage() {
         {/* Pillar 4: Explainability & Interpretability */}
         <div className="bg-white/5 border border-white/10 p-6 md:p-8 rounded-3xl backdrop-blur-md">
           <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4">
-            <Eye className="w-6 h-6 text-amber-400" />
+            <EyeOpenIcon className="w-6 h-6 text-amber-400" />
           </div>
           <h2 className="text-xl font-bold text-white mb-2">4. Transparent Explainability (XAI)</h2>
           <p className="text-sm text-gray-300 leading-relaxed mb-4">
@@ -132,12 +141,12 @@ export default function EthicalAIPage() {
 
           <div className="flex flex-col gap-2 min-w-[200px]">
             <a 
-              href="https://github.com/Anannya-Vyas/website-part2-" 
+              href="https://github.com/Anannya-Vyas/srijansetu-hackathon-" 
               target="_blank" 
               rel="noreferrer"
               className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-white text-black font-bold text-sm hover:bg-gray-200 transition-all shadow-lg"
             >
-              <GitBranch className="w-4 h-4" /> Open-Source GitHub
+              <ExternalLinkIcon className="w-4 h-4" /> Open-Source GitHub
             </a>
             <span className="text-[11px] text-center text-gray-500">MIT Open Source Licensed</span>
           </div>

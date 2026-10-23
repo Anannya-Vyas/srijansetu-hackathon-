@@ -1,7 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ShieldCheck, FileSpreadsheet, Activity, Bone, Cpu, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { 
+  ArrowLeftIcon, 
+  FileTextIcon, 
+  ActivityLogIcon, 
+  LayersIcon, 
+  ExclamationTriangleIcon, 
+  CheckCircledIcon, 
+  LockClosedIcon 
+} from "@radix-ui/react-icons";
 
 export default function ModelCardPage() {
   return (
@@ -12,7 +20,7 @@ export default function ModelCardPage() {
           href="/" 
           className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Home
+          <ArrowLeftIcon className="w-4 h-4" /> Back to Home
         </Link>
         <span className="text-xs font-mono text-emerald-400 border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 rounded-full">
           Transparency Standard ISO/IEC 42001 Compliant
@@ -21,7 +29,7 @@ export default function ModelCardPage() {
 
       <div className="mb-10">
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3 flex items-center gap-3">
-          <FileSpreadsheet className="w-10 h-10 text-emerald-400" />
+          <FileTextIcon className="w-9 h-9 text-emerald-400" />
           Model Card & Clinical Benchmark
         </h1>
         <p className="text-gray-400 max-w-3xl text-sm md:text-base leading-relaxed">
@@ -53,7 +61,7 @@ export default function ModelCardPage() {
       {/* Confusion Matrix Section */}
       <div className="bg-white/5 border border-white/10 p-6 md:p-8 rounded-3xl mb-8">
         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-          <Activity className="w-5 h-5 text-emerald-400" /> DenseNet-121 Test Confusion Matrix (N = 1,147)
+          <ActivityLogIcon className="w-5 h-5 text-emerald-400" /> DenseNet-121 Test Confusion Matrix (N = 1,147)
         </h2>
         <p className="text-sm text-gray-400 mb-6">
           Evaluated against ground truth DXA/radiological adjudication. Note the balanced performance across all bone density strata.
@@ -104,7 +112,7 @@ export default function ModelCardPage() {
       {/* Multimodal Ablation Study */}
       <div className="bg-white/5 border border-white/10 p-6 md:p-8 rounded-3xl mb-8">
         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-          <Cpu className="w-5 h-5 text-emerald-400" /> Multimodal Fusion Ablation Study
+          <LayersIcon className="w-5 h-5 text-emerald-400" /> Multimodal Fusion Ablation Study
         </h2>
         <p className="text-sm text-gray-400 mb-6">
           Quantifying the incremental value of combining computer vision, tabular clinical biomarkers, and kinematics over single-modality approaches.
@@ -139,7 +147,7 @@ export default function ModelCardPage() {
       {/* Documented Clinical Boundaries & Failure Modes */}
       <div className="p-6 md:p-8 rounded-3xl bg-amber-500/10 border border-amber-500/30">
         <h2 className="text-xl font-bold text-amber-300 mb-3 flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5 text-amber-400" /> Explicit Clinical Limitations & Edge Cases
+          <ExclamationTriangleIcon className="w-5 h-5 text-amber-400" /> Explicit Clinical Limitations & Edge Cases
         </h2>
         <ul className="space-y-2 text-sm text-amber-200/90 list-disc list-inside leading-relaxed">
           <li><strong>Pre-Osteopenia Detection:</strong> Conventional 2D radiographs typically cannot detect minor bone loss prior to 30% trabecular depletion. For high clinical risk patients with normal X-rays, a DEXA confirmation scan is always recommended.</li>

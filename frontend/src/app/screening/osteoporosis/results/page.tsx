@@ -5,10 +5,22 @@ import { useScreening } from "@/context/ScreeningContext";
 import { usePatient } from "@/context/PatientContext";
 import { useRouter } from "next/navigation";
 import { 
-  Activity, Bone, Download, AlertTriangle, CheckCircle2, 
-  Eye, Sparkles, MapPin, Phone, ShieldCheck, ThumbsUp, ThumbsDown, 
-  RotateCcw, ArrowRight, ExternalLink 
-} from "lucide-react";
+  DownloadIcon, 
+  CheckCircledIcon, 
+  ExclamationTriangleIcon, 
+  EyeOpenIcon, 
+  EyeClosedIcon, 
+  MagicWandIcon, 
+  ReloadIcon, 
+  ArrowRightIcon, 
+  ExternalLinkIcon, 
+  ActivityLogIcon, 
+  LayersIcon, 
+  LockClosedIcon, 
+  Cross2Icon,
+  DrawingPinIcon
+} from "@radix-ui/react-icons";
+import { ThumbsUp, ThumbsDown, Phone } from "lucide-react";
 import Link from "next/link";
 
 export default function OsteoporosisResults() {
@@ -81,10 +93,10 @@ export default function OsteoporosisResults() {
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3 print:hidden">
-            <Sparkles className="w-3.5 h-3.5" /> DenseNet-121 Clean Architecture • Multimodal Decision Support
+            <MagicWandIcon className="w-3.5 h-3.5" /> DenseNet-121 Clean Architecture • Multimodal Decision Support
           </div>
           <h1 className="text-4xl font-extrabold mb-4 flex items-center gap-3 tracking-tight">
-            <Bone className="text-emerald-500 w-10 h-10" />
+            <LayersIcon className="text-emerald-500 w-10 h-10" />
             Osteoporosis Clinical Assessment
           </h1>
           {patient && (
@@ -112,7 +124,7 @@ export default function OsteoporosisResults() {
             onClick={() => setShowDexaModal(true)}
             className="flex items-center gap-2 bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/30 text-purple-300 px-4 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg backdrop-blur-md hover:scale-105"
           >
-            <MapPin className="w-4 h-4 text-purple-400" />
+            <DrawingPinIcon className="w-4 h-4 text-purple-400" />
             Find DEXA Centres
           </button>
           
@@ -120,7 +132,7 @@ export default function OsteoporosisResults() {
             onClick={() => window.print()} 
             className="group flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-2xl text-sm font-bold transition-all shadow-lg hover:scale-105"
           >
-            <Download className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
+            <DownloadIcon className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
             Referral PDF
           </button>
         </div>
@@ -144,7 +156,7 @@ export default function OsteoporosisResults() {
         <div className="flex flex-col lg:flex-row gap-8 items-center justify-between">
           <div className="flex-1 space-y-4">
             <h2 className={`text-2xl font-bold flex items-center gap-2 ${isHighRisk ? "text-amber-400" : "text-emerald-400"}`}>
-              <Activity className="w-6 h-6" /> Multimodal Calibrated Synthesis
+              <ActivityLogIcon className="w-6 h-6" /> Multimodal Calibrated Synthesis
             </h2>
             <p className="text-gray-300 text-base leading-relaxed">
               Fusing clinical lifestyle biomarkers ({clinicalResult?.model_name || "XGBoost Pipeline"}) with deep radiographic bone attenuation ({imagingResult?.model_name || "DenseNet-121 Clean"}).
@@ -167,7 +179,7 @@ export default function OsteoporosisResults() {
 
             {isDiscordant && (
               <div className="flex items-start gap-3 bg-amber-500/10 border border-amber-500/30 p-4 rounded-2xl text-amber-300 text-sm">
-                <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-400" />
+                <ExclamationTriangleIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-400" />
                 <span>
                   <strong>Clinical Note on Modality Variance:</strong> Clinical questionnaire suggests high fracture vulnerability ({clinicalLabel}), while plain X-ray features appear early-stage ({imagingLabel}). Plain radiographs often appear normal until &gt;30% bone mineral depletion occurs. Confirmatory DEXA scan advised.
                 </span>
@@ -208,7 +220,7 @@ export default function OsteoporosisResults() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-emerald-400 flex items-center gap-2">
-                <Sparkles className="w-5 h-5" /> Explainable AI (Grad-CAM)
+                <MagicWandIcon className="w-5 h-5" /> Explainable AI (Grad-CAM)
               </h2>
               {imagingResult?.gradcam_image && (
                 <div className="flex items-center gap-1 bg-white/10 p-1 rounded-xl text-xs">
@@ -251,7 +263,7 @@ export default function OsteoporosisResults() {
 
           <div className="mt-4 pt-4 border-t border-white/10 text-xs text-gray-400 flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-emerald-400">
-              <ShieldCheck className="w-4 h-4" /> CLAHE Contrast Enhancement Applied
+              <LockClosedIcon className="w-4 h-4" /> CLAHE Contrast Enhancement Applied
             </span>
             <span>Target Class: {imagingLabel}</span>
           </div>
@@ -262,7 +274,7 @@ export default function OsteoporosisResults() {
           {/* Imaging Probabilities */}
           <div className="bg-black/40 border border-white/10 p-6 rounded-3xl">
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <Bone className="w-5 h-5 text-emerald-400" /> DenseNet-121 Class Probabilities
+              <LayersIcon className="w-5 h-5 text-emerald-400" /> DenseNet-121 Class Probabilities
             </h3>
             
             {imagingResult?.probabilities ? (
@@ -301,7 +313,7 @@ export default function OsteoporosisResults() {
           {/* Clinical Questionnaire Card */}
           <div className="bg-black/40 border border-white/10 p-6 rounded-3xl">
             <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-emerald-400" /> Clinical Lifestyle Pipeline
+              <ActivityLogIcon className="w-5 h-5 text-emerald-400" /> Clinical Lifestyle Pipeline
             </h3>
             {clinicalResult ? (
               <div className="space-y-2 text-sm">
@@ -330,7 +342,7 @@ export default function OsteoporosisResults() {
             </div>
             {feedbackSubmitted ? (
               <span className="text-xs text-emerald-400 font-bold flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4" /> Feedback Logged
+                <CheckCircledIcon className="w-4 h-4" /> Feedback Logged
               </span>
             ) : (
               <div className="flex items-center gap-2">
@@ -358,7 +370,7 @@ export default function OsteoporosisResults() {
           href="/" 
           className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm"
         >
-          <RotateCcw className="w-4 h-4" /> Start New Patient Screening
+          <ReloadIcon className="w-4 h-4" /> Start New Patient Screening
         </Link>
 
         <div className="flex items-center gap-3">
@@ -366,7 +378,7 @@ export default function OsteoporosisResults() {
             href="/screening/lifestyle-simulator"
             className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-bold bg-white/10 hover:bg-white/20 text-white transition-all"
           >
-            What-If Lifestyle Simulator <ArrowRight className="w-4 h-4" />
+            What-If Lifestyle Simulator <ArrowRightIcon className="w-4 h-4" />
           </Link>
         </div>
       </div>
@@ -378,7 +390,7 @@ export default function OsteoporosisResults() {
             <div className="flex justify-between items-center mb-4">
               <div>
                 <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-purple-400" /> Vetted DEXA Diagnostic Centres
+                  <DrawingPinIcon className="w-5 h-5 text-purple-400" /> Vetted DEXA Diagnostic Centres
                 </h3>
                 <p className="text-xs text-gray-400">Referral-ready facilities across Punjab & Chandigarh</p>
               </div>
@@ -386,7 +398,7 @@ export default function OsteoporosisResults() {
                 onClick={() => setShowDexaModal(false)}
                 className="text-gray-400 hover:text-white p-2 rounded-full hover:bg-white/10"
               >
-                ✕
+                <Cross2Icon className="w-5 h-5" />
               </button>
             </div>
 

@@ -2,7 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Sparkles, Sliders, Sun, ShieldCheck, Bone, Activity, Heart, ArrowRight } from "lucide-react";
+import { 
+  ArrowLeftIcon, 
+  MagicWandIcon, 
+  MixerHorizontalIcon, 
+  SunIcon, 
+  LockClosedIcon, 
+  LayersIcon, 
+  ActivityLogIcon, 
+  HeartFilledIcon, 
+  ArrowRightIcon 
+} from "@radix-ui/react-icons";
 
 export default function LifestyleSimulatorPage() {
   const [calcium, setCalcium] = useState(500); // mg/day (typical Indian baseline ~500mg)
@@ -42,17 +52,17 @@ export default function LifestyleSimulatorPage() {
           href="/" 
           className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Home
+          <ArrowLeftIcon className="w-4 h-4" /> Back to Home
         </Link>
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-          <Sparkles className="w-3.5 h-3.5" /> Interactive Prognostic Simulation
+          <MagicWandIcon className="w-3.5 h-3.5" /> Interactive Prognostic Simulation
         </div>
       </div>
 
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2 flex items-center gap-3">
-          <Sliders className="w-10 h-10 text-emerald-400" />
+          <MixerHorizontalIcon className="w-9 h-9 text-emerald-400" />
           What-If Lifestyle Simulator
         </h1>
         <p className="text-gray-400 max-w-2xl text-base">
@@ -71,7 +81,7 @@ export default function LifestyleSimulatorPage() {
           <div className="space-y-2">
             <div className="flex justify-between items-center text-sm">
               <span className="flex items-center gap-2 text-gray-300 font-medium">
-                <Bone className="w-4 h-4 text-emerald-400" /> Daily Dietary Calcium
+                <LayersIcon className="w-4 h-4 text-emerald-400" /> Daily Dietary Calcium
               </span>
               <span className="font-mono font-bold text-emerald-400 text-base">{calcium} mg/day</span>
             </div>
@@ -95,7 +105,7 @@ export default function LifestyleSimulatorPage() {
           <div className="space-y-2">
             <div className="flex justify-between items-center text-sm">
               <span className="flex items-center gap-2 text-gray-300 font-medium">
-                <Sun className="w-4 h-4 text-amber-400" /> Daily Midday Sun Exposure (Vit D3)
+                <SunIcon className="w-4 h-4 text-amber-400" /> Daily Midday Sun Exposure (Vit D3)
               </span>
               <span className="font-mono font-bold text-amber-400 text-base">{sunExposure} mins/day</span>
             </div>
@@ -119,7 +129,7 @@ export default function LifestyleSimulatorPage() {
           <div className="space-y-2">
             <div className="flex justify-between items-center text-sm">
               <span className="flex items-center gap-2 text-gray-300 font-medium">
-                <Activity className="w-4 h-4 text-blue-400" /> Weight-Bearing & Resistance Exercise
+                <ActivityLogIcon className="w-4 h-4 text-blue-400" /> Weight-Bearing & Resistance Exercise
               </span>
               <span className="font-mono font-bold text-blue-400 text-base">{exerciseDays} days/week</span>
             </div>
@@ -159,7 +169,7 @@ export default function LifestyleSimulatorPage() {
 
           {/* Clinical Evidence Note */}
           <div className="text-xs text-gray-400 bg-black/40 p-3.5 rounded-2xl border border-white/5 flex items-start gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+            <LockClosedIcon className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
             <span>
               <strong>Scientific Basis:</strong> Modeled after the WHO FRAX risk matrix and IOF (International Osteoporosis Foundation) intervention guidelines.
             </span>
@@ -172,7 +182,7 @@ export default function LifestyleSimulatorPage() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full pointer-events-none" />
 
             <h3 className="text-sm uppercase tracking-wider text-emerald-400 font-bold mb-6 flex items-center gap-2">
-              <Heart className="w-4 h-4" /> Projected Health Trajectory
+              <HeartFilledIcon className="w-4 h-4 text-rose-400" /> Projected Health Trajectory
             </h3>
 
             {/* Bone Health Age Comparison */}
@@ -229,7 +239,7 @@ export default function LifestyleSimulatorPage() {
                 href="/screening/worker-queue"
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg hover:scale-105"
               >
-                Go to Community Screening Queue <ArrowRight className="w-4 h-4" />
+                Go to Community Screening Queue <ArrowRightIcon className="w-4 h-4" />
               </Link>
             </div>
           </div>
