@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 
@@ -9,6 +9,14 @@ export type AIResult = {
   result: string;
   model_name: string;
   evidence?: { feature: string, value: number, contribution: number }[] | string[];
+  gradcam_image?: string;
+  bone_health_age?: number;
+  probabilities?: Record<string, number>;
+  screening_tier?: string;
+  quality_passed?: boolean;
+  quality_metrics?: Record<string, any>;
+  original_preview?: string;
+  [key: string]: any;
 };
 
 export type IMUResult = {

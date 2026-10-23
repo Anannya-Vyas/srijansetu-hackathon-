@@ -7,6 +7,9 @@ export type PatientInfo = {
   patientId: string;
   screeningId: string;
   screeningStartedAt: string; // ISO string
+  age?: number;
+  gender?: string;
+  [key: string]: any;
 };
 
 type PatientContextType = {

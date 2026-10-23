@@ -1,95 +1,192 @@
 import os
 import joblib
 import pandas as pd
-import shap
 import numpy as np
 
 MODEL_DIR = os.path.join(os.path.dirname(__file__), '../models')
+MODEL_A_PATH = os.path.join(MODEL_DIR, 'Model_A_Clinical_XGBoost_final_model.pkl')
+MODEL_B_PATH = os.path.join(MODEL_DIR, 'Model_B_Metabolic_RandomForest_final_model.pkl')
+
 clinical_model = None
 metabolic_model = None
 
 def load_models():
-    pass
+    global clinical_model, metabolic_model
+    if clinical_model is None and os.path.exists(MODEL_A_PATH):
+        try:
+            clinical_model = joblib.load(MODEL_A_PATH)
+            print("Successfully loaded Model A (Clinical XGBoost)")
+        except Exception as e:
+            print(f"Warning: Could not load Model A: {e}")
+
+    if metabolic_model is None and os.path.exists(MODEL_B_PATH):
+        try:
+            metabolic_model = joblib.load(MODEL_B_PATH)
+            print("Successfully loaded Model B (Metabolic RandomForest)")
+        except Exception as e:
+            print(f"Warning: Could not load Model B: {e}")
+
+# Pre-load on import
+load_models()
 
 def analyze_clinical(data: dict):
-    # Deterministic risk calculation for Clinical
-    womac_score = float(data.get('womac_score', 0))
-    vas_score = float(data.get('vas_score', 0))
-    age = float(data.get('age', 25))
+    load_models()
     
+    age = float(data.get('age', 45.0))
+    gender = int(data.get('gender', 0))
+    bmi = float(data.get('BMI', 24.5))
+    womac_score = float(data.get('womac_score', 0.0))
+    vas_score = float(data.get('vas_score', 0.0))
+    
+    if clinical_model is not None:
+        try:
+            # Model A expects: ['age', 'gender', 'BMI', 'WOMAC score', 'VAS score']
+            df = pd.DataFrame([{
+                'age': age,
+                'gender': gender,
+                'BMI': bmi,
+                'WOMAC score': womac_score,
+                'VAS score': vas_score
+            }])
+            
+            probs = clinical_model.predict_proba(df)[0]
+            # Binary classification [Normal(0), OA_Risk(1)]
+            prob = float(probs[1]) if len(probs) > 1 else float(probs[0])
+            
+            # Risk categorization
+            if prob >= 0.65:
+                result = "High Risk"
+            elif prob >= 0.35:
+                result = "Moderate"
+            else:
+                result = "Low Risk"
+                
+            evidence = [
+                "Clinical XGBoost Pipeline (Trained on Clinical Cohort):",
+                f"1. WOMAC Functional Score: {womac_score:.1f}/96 (Primary clinical predictor for joint dysfunction).",
+                f"2. VAS Visual Analog Pain: {vas_score:.1f}/10 (Direct pain intensity index).",
+                f"3. Biometrics: Age {int(age)}, BMI {bmi:.1f}, Gender: {'Female' if gender == 1 else 'Male'}.",
+                f"4. Model Output Probability: {prob * 100:.1f}% risk of symptomatic osteoarthritis."
+            ]
+            
+            return {
+                'status': 'success',
+                'probability': round(prob, 4),
+                'threshold': 0.45,
+                'result': result,
+                'model_name': 'Clinical_XGBoost_Ensemble (Real Model)',
+                'evidence': evidence,
+                'is_ml_model': True
+            }
+        except Exception as e:
+            print(f"Model A inference error, falling back to clinical formula: {e}")
+
+    # Fallback clinical formula if model fails to load
     base_risk = 0.05
     womac_risk = (womac_score / 96.0) * 0.50
     vas_risk = (vas_score / 10.0) * 0.30
-    age_risk = max(0, min((age - 30) / 50.0, 1.0)) * 0.15
+    age_risk = max(0.0, min((age - 30.0) / 50.0, 1.0)) * 0.15
     
-    prob = base_risk + womac_risk + vas_risk + age_risk
-    prob = min(prob, 0.98)
+    prob = min(base_risk + womac_risk + vas_risk + age_risk, 0.98)
+    result = "High Risk" if prob > 0.6 else "Moderate" if prob > 0.3 else "Low Risk"
     
-    if prob > 0.6:
-        result = "High Risk"
-    elif prob > 0.3:
-        result = "Moderate"
-    else:
-        result = "Low Risk"
-        
-    evidence = [
-        "Feature Importance Analysis:",
-        f"1. WOMAC Score ({womac_score}): Contributes {(womac_risk * 100):.1f}% to risk probability based on functional limitation.",
-        f"2. VAS Pain ({vas_score}): Contributes {(vas_risk * 100):.1f}% to risk due to inflammatory markers.",
-        f"3. Age Factor ({age}): Base multiplier adds {(age_risk * 100):.1f}%."
-    ]
-
     return {
         'status': 'success',
-        'probability': prob,
+        'probability': round(prob, 4),
         'threshold': 0.45,
         'result': result,
-        'model_name': 'Clinical_XGBoost_Ensemble',
-        'evidence': evidence
+        'model_name': 'Clinical_Risk_Algorithm',
+        'evidence': [
+            f"1. WOMAC Score ({womac_score}): Functional impairment component.",
+            f"2. VAS Pain ({vas_score}): Inflammatory and pain marker.",
+            f"3. Age Component ({age}): Demographic risk multiplier."
+        ],
+        'is_ml_model': False
     }
 
 def analyze_metabolic(data: dict):
-    bmi = float(data.get('BMI', 22.0))
-    age = float(data.get('AGE', 25))
-    tc = float(data.get('TC', 150))
-    diabetes_raw = str(data.get('History_of_Diabetes_Mellitis', 'No')).lower()
-    diabetes = diabetes_raw in ['yes', 'true', '1']
+    load_models()
     
-    base_risk = 0.05
+    age = int(float(data.get('AGE', data.get('age', 45))))
+    gender = int(data.get('GENDER', data.get('gender', 0)))
+    bmi = float(data.get('BMI', data.get('bmi', 24.5)))
     
-    bmi_risk = 0
-    if bmi > 25:
-        bmi_risk = min((bmi - 25) / 15.0, 1.0) * 0.45
-        
-    age_risk = max(0, min((age - 30) / 50.0, 1.0)) * 0.15
-    diab_risk = 0.20 if diabetes else 0
+    htn_raw = data.get('Hypertension_treatment', data.get('hypertension', 0))
+    htn = 1 if str(htn_raw).lower() in ['1', 'true', 'yes'] else 0
     
-    tc_risk = 0
-    if tc > 200:
-        tc_risk = min((tc - 200) / 100.0, 1.0) * 0.10
-        
-    prob = base_risk + bmi_risk + age_risk + diab_risk + tc_risk
-    prob = min(prob, 0.95)
+    dm_raw = data.get('History_of_Diabetes_Mellitis', data.get('diabetes', 0))
+    dm = 1 if str(dm_raw).lower() in ['1', 'true', 'yes'] else 0
     
-    if prob > 0.6:
-        result = "High Risk"
-    elif prob > 0.3:
-        result = "Moderate"
-    else:
-        result = "Low Risk"
-        
-    evidence = [
-        "Metabolic Neural Network Insights:",
-        f"1. BMI Index ({bmi:.1f}): Mechanical overload contributes {(bmi_risk * 100):.1f}% to structural deterioration risk.",
-        f"2. Diabetes: {'Present (+20% Risk)' if diabetes else 'None detected'}.",
-        f"3. Lipid Profile (TC: {tc}): Subchondral vascular risk adds {(tc_risk * 100):.1f}%."
-    ]
+    smoker_raw = data.get('SMOKER', data.get('smoker', 0))
+    smoker = 1 if str(smoker_raw).lower() in ['1', 'true', 'yes'] else 0
+    
+    tc = float(data.get('TC', data.get('total_cholesterol', 180.0)))
+    hdl = float(data.get('HDL', data.get('hdl', 50.0)))
+    
+    if metabolic_model is not None:
+        try:
+            # Model B expects: ['AGE', 'GENDER', 'BMI', 'Hypertension treatment ', 'History of Diabetes Mellitis', 'SMOKER', 'TC', 'HDL']
+            df = pd.DataFrame([{
+                'AGE': age,
+                'GENDER': gender,
+                'BMI': bmi,
+                'Hypertension treatment ': htn,
+                'History of Diabetes Mellitis': dm,
+                'SMOKER': smoker,
+                'TC': tc,
+                'HDL': hdl
+            }])
+            
+            probs = metabolic_model.predict_proba(df)[0]
+            prob = float(probs[1]) if len(probs) > 1 else float(probs[0])
+            
+            if prob >= 0.60:
+                result = "High Risk"
+            elif prob >= 0.35:
+                result = "Moderate"
+            else:
+                result = "Low Risk"
+                
+            evidence = [
+                "Metabolic Random Forest Insights (Trained on Metabolic Cohort):",
+                f"1. BMI Mechanical Burden: {bmi:.1f} kg/m² ({'Overweight/Obese' if bmi >= 25 else 'Normal range'}).",
+                f"2. Comorbidities: Diabetes {'Present' if dm == 1 else 'Absent'}, Hypertension Treatment {'Active' if htn == 1 else 'None'}.",
+                f"3. Lipid Profile: Total Cholesterol {tc:.0f} mg/dL, HDL {hdl:.0f} mg/dL (TC/HDL ratio: {tc/max(hdl, 1):.1f}).",
+                f"4. Random Forest Probability: {prob * 100:.1f}% metabolic OA acceleration risk."
+            ]
+            
+            return {
+                'status': 'success',
+                'probability': round(prob, 4),
+                'threshold': 0.45,
+                'result': result,
+                'model_name': 'Metabolic_RandomForest (Real Model)',
+                'evidence': evidence,
+                'is_ml_model': True
+            }
+        except Exception as e:
+            print(f"Model B inference error, falling back to metabolic formula: {e}")
 
+    # Fallback heuristic
+    base_risk = 0.05
+    bmi_risk = min(max(bmi - 25.0, 0) / 15.0, 1.0) * 0.45 if bmi > 25 else 0
+    age_risk = max(0.0, min((age - 30.0) / 50.0, 1.0)) * 0.15
+    diab_risk = 0.20 if dm == 1 else 0
+    tc_risk = min(max(tc - 200.0, 0) / 100.0, 1.0) * 0.10 if tc > 200 else 0
+    
+    prob = min(base_risk + bmi_risk + age_risk + diab_risk + tc_risk, 0.95)
+    result = "High Risk" if prob > 0.6 else "Moderate" if prob > 0.3 else "Low Risk"
+    
     return {
         'status': 'success',
-        'probability': prob,
+        'probability': round(prob, 4),
         'threshold': 0.45,
         'result': result,
-        'model_name': 'Metabolic_RandomForest',
-        'evidence': evidence
+        'model_name': 'Metabolic_Risk_Algorithm',
+        'evidence': [
+            f"1. BMI Index ({bmi:.1f}): Mechanical load risk.",
+            f"2. Diabetes Status: {'Present' if dm == 1 else 'None'}.",
+            f"3. Total Cholesterol ({tc:.0f}): Lipid vascular factor."
+        ],
+        'is_ml_model': False
     }

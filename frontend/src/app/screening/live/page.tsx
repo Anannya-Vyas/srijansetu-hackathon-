@@ -209,12 +209,14 @@ export default function LiveScreeningPage() {
           
           <Webcam
             ref={webcamRef}
-            className="hidden"
+            audio={false}
+            mirrored={true}
             videoConstraints={{ facingMode: "user" }}
+            className="w-full h-full object-cover"
           />
           <canvas
             ref={canvasRef}
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
           />
           
           {countdown !== null && (
