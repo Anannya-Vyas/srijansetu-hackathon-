@@ -58,7 +58,7 @@ export default function QuestionnairePage() {
     height: 170, // cm
     weight: 70,  // kg
     gender: 0, 
-    vas_score: 4,
+    vas_score: 0,
     unknown_metabolic: false,
     Hypertension_treatment: 0,
     History_of_Diabetes_Mellitis: 0,

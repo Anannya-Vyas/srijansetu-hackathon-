@@ -65,9 +65,11 @@ export default function OsteoporosisXRayPage() {
         return;
       }
 
-      const osteoProb = result.probabilities && result.probabilities["Osteoporosis"] !== undefined
-        ? result.probabilities["Osteoporosis"] / 100
-        : (result.prediction === "Osteoporosis" ? result.confidence / 100 : (1 - (result.confidence / 100)));
+      const osteoProb = result.probability !== undefined
+        ? result.probability
+        : (result.probabilities && result.probabilities["Osteoporosis"] !== undefined
+            ? ((result.probabilities["Osteoporosis"] || 0) * 1.0 + (result.probabilities["Osteopenia"] || 0) * 0.65) / 100
+            : (result.prediction === "Osteoporosis" ? 0.85 : result.prediction === "Osteopenia" ? 0.60 : 0.15));
 
       setImagingResult({
         status: "success",

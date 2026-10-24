@@ -53,10 +53,14 @@ export default function OsteoporosisQuestionnaire() {
       
       setClinicalResult({
         status: "success",
-        probability: data.confidence / 100,
+        probability: data.probability ?? data.confidence / 100,
         threshold: 0.50,
         result: data.prediction,
-        model_name: "Osteoporosis XGBoost",
+        model_name: "Osteoporosis Clinical Pipeline (T-score + Biochem)",
+        probabilities: data.probabilities,
+        evidence: data.evidence,
+        biochemical_summary: data.biochemical_summary,
+        t_score: data.t_score,
       });
 
       router.push(nextRoute);
